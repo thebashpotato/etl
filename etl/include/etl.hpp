@@ -106,7 +106,7 @@ namespace etl {
          * @brief Is equal overload
          * */
         [[nodiscard]] auto
-        operator==(const EnumerationIterator &other_iterator) const noexcept -> bool {
+        operator==(EnumerationIterator const &other_iterator) const noexcept -> bool {
             return value_ == other_iterator.value_;
         }
 
@@ -115,7 +115,7 @@ namespace etl {
          * @brief Not equal overload
          * */
         [[nodiscard]] auto
-        operator!=(const EnumerationIterator &other_iterator) const noexcept -> bool {
+        operator!=(EnumerationIterator const &other_iterator) const noexcept -> bool {
             return !(*this == other_iterator);
         }
 
@@ -262,15 +262,13 @@ namespace etl {
  * and guarantees that the accurate file, function name, and line number will be
  * reported.
  * */
-#ifdef _WIN32
-
-#define RUNTIME_INFO \
-    SourceLocation(__FILE__, __LINE__, static_cast<const char *>(__func__))
-
-#else
+#ifdef __linux__
 #define RUNTIME_INFO                   \
     SourceLocation(__FILE__, __LINE__, \
                    static_cast<const char *>(__PRETTY_FUNCTION__))
+#else
+#define RUNTIME_INFO \
+    SourceLocation(__FILE__, __LINE__, static_cast<const char *>(__func__))
 #endif
 
 
@@ -282,9 +280,9 @@ namespace etl {
         IError() = default;
         virtual ~IError() = default;
         IError(IError &&other) noexcept = default;
-        auto operator=(IError &&other) noexcept -> IError &;
-        IError(const IError &other) = default;
-        auto operator=(const IError &other) -> IError & = default;
+        auto operator=(IError &&other) noexcept -> IError & = default;
+        IError(IError const &other) = default;
+        auto operator=(IError const &other) -> IError & = default;
 
     public:
         [[nodiscard]] virtual inline auto msg() const noexcept -> std::string = 0;
@@ -305,30 +303,14 @@ namespace etl {
         /**
          * @brief Constructs the error with only a message
          * */
-        explicit Error(std::string &&msg) noexcept : msg_(std::move(msg)) {}
+        explicit Error(std::string_view const &msg) noexcept : msg_(msg) {}
 
 
         /**
          * @brief Constructs the error with the message and source location
          * using move semantics
          * */
-        Error(std::string &&msg, SourceLocation &&slc) noexcept : msg_(std::move(msg)) {
-            info_.append("Error: ")
-                    .append(msg)
-                    .append("\nFunction: ")
-                    .append(slc.function())
-                    .append("\nFile: ")
-                    .append(slc.file())
-                    .append(":")
-                    .append(std::to_string(slc.line()));
-        }
-
-
-        /**
-         * @brief Constructs the error with the message and source location
-         * using const a reference
-         * */
-        Error(std::string const &msg, SourceLocation const &slc) noexcept : msg_(msg) {
+        Error(std::string_view const &msg, SourceLocation &&slc) noexcept : msg_(msg) {
             info_.append("Error: ")
                     .append(msg)
                     .append("\nFunction: ")
@@ -345,16 +327,16 @@ namespace etl {
          * */
         ~Error() override = default;
         Error(Error &&other) noexcept = default;
-        auto operator=(Error &&other) noexcept -> Error &;
-        Error(const Error &other) = default;
-        auto operator=(const Error &other) -> Error & = default;
+        auto operator=(Error &&other) noexcept -> Error & = default;
+        Error(Error const &other) = default;
+        auto operator=(Error const &other) -> Error & = default;
 
     public:
         /**
-         * @brief Creates an Error object with only an error message
+         * @brief Creates an Error object with only an error message via string_view
          * */
-        [[nodiscard]] inline static auto create(std::string &&msg) -> Error {
-            auto error = Error(std::move(msg));
+        [[nodiscard]] inline static auto create(std::string_view const &msg) -> Error {
+            auto error = Error(msg);
             return error;
         }
 
@@ -363,18 +345,8 @@ namespace etl {
          * @brief Creates an Error object with error message and source location information
          * using move semantics
          * */
-        [[nodiscard]] inline static auto create(std::string &&msg, SourceLocation &&slc) -> Error {
-            auto error = Error(std::move(msg), std::move(slc));
-            return error;
-        }
-
-
-        /**
-         * @brief Creates an Error object with error message and source location information
-         * using const ref
-         * */
-        [[nodiscard]] inline static auto create(std::string const &msg, SourceLocation const &slc) -> Error {
-            auto error = Error(msg, slc);
+        [[nodiscard]] inline static auto create(std::string_view const &msg, SourceLocation &&slc) -> Error {
+            auto error = Error(msg, std::move(slc));
             return error;
         }
 
@@ -386,16 +358,34 @@ namespace etl {
             return msg_;
         }
 
+
         /**
-         * @brief Get the pre-formatted (pretty printed) error string
+         * @brief Override the current error message, useful when using the Result.mapErr method.
          * */
-        [[nodiscard]] inline auto info() const noexcept -> std::string override {
-            return info_;
+        [[nodiscard]] inline auto set(std::string_view &&msg) noexcept {
+            msg_ = msg;
         }
 
-        [[nodiscard]] inline auto set_msg(std::string &&msg) noexcept {
-            msg_.clear();
+
+        /**
+         * @brief Override the current error message, useful when using the Result.mapErr method.
+         * */
+        [[nodiscard]] inline auto set(std::string_view const &msg) noexcept {
             msg_ = msg;
+        }
+
+
+        /**
+         * @brief Get the pre-formatted (pretty printed) error string.
+         *
+         * @details If Error was not created with the RUNTIME_INFO macro info_ will be empty,
+         * in which case the msg_ will be returned instead.
+         * */
+        [[nodiscard]] inline auto info() const noexcept -> std::string override {
+            if (!info_.empty()) {
+                return info_;
+            }
+            return msg_;
         }
     };
 
@@ -424,9 +414,9 @@ namespace etl {
         /**
          * @brief All the constructors needed to build an OkType or ErrType
          * */
-        explicit Result(const OkType &value) : result_(value), isOk_(true) {}
+        explicit Result(OkType const &value) : result_(value), isOk_(true) {}
         explicit Result(OkType &&value) : result_(std::move(value)), isOk_(true) {}
-        explicit Result(const ErrType &error) : result_(error), isOk_(false) {}
+        explicit Result(ErrType const &error) : result_(error), isOk_(false) {}
         explicit Result(ErrType &&error) : result_(std::move(error)), isOk_(false) {}
 
 
@@ -501,9 +491,9 @@ namespace etl {
          * if isOK() is false.
          * */
         template<typename Function>
-        [[nodiscard]] inline auto map(Function &&func) const -> Result<OkType, ErrType> {
+        [[nodiscard]] inline auto map(Function &&func) const noexcept -> Result<OkType, ErrType> {
             if (isOk_) {
-                if constexpr (std::is_invocable_r_v<OkType, Function, const OkType &>) {
+                if constexpr (std::is_invocable_r_v<OkType, Function, OkType const &>) {
                     return Result<OkType, ErrType>(std::invoke(std::forward<Function>(func), *std::get_if<OkType>(&result_)));
                 } else {
                     return Result<OkType, ErrType>(*std::get_if<OkType>(&result_));
@@ -522,9 +512,9 @@ namespace etl {
          * if isErr() is false.
          * */
         template<typename Function>
-        [[nodiscard]] inline auto mapErr(Function &&func) const -> Result<OkType, ErrType> {
+        [[nodiscard]] inline auto mapErr(Function &&func) const noexcept -> Result<OkType, ErrType> {
             if (!isOk_) {
-                if constexpr (std::is_invocable_r_v<ErrType, Function, const ErrType &>) {
+                if constexpr (std::is_invocable_r_v<ErrType, Function, ErrType const &>) {
                     return Result<OkType, ErrType>(std::invoke(std::forward<Function>(func), *std::get_if<ErrType>(&result_)));
                 } else {
                     return Result<OkType, ErrType>(*std::get_if<ErrType>(&result_));

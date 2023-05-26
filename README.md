@@ -4,7 +4,7 @@
 <div align="center">
   <img src="https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square">
   <br>
-  <p><b>Extra Template Library</b> for modern C++ development</p>
+  <p><b>Extra Templated Library</b> for modern C++ development</p>
 </div>
 
 

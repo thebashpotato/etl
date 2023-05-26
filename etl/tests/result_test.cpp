@@ -10,7 +10,7 @@ auto divide(int numerator, int denominator) noexcept -> Result<int, Error> {
     return Result<int, Error>(numerator / denominator);
 }
 
-TEST(EtlResult, ResultOkTypetest) {
+TEST(EtlResult, ResultOkTypeTest) {
     constexpr auto numerator = 10;
     constexpr auto denominator = 5;
 
@@ -57,8 +57,8 @@ TEST(EtlResult, ResultErrTypeMapErrTest) {
     ASSERT_FALSE(result.isOk());
     ASSERT_EQ(result.err().value().msg(), "Division by zero Error");
 
-    Result<int, Error> appendResult = result.mapErr([](Error &error) -> Error {
-        error.set_msg("Error: Division by zero");
+    Result<int, Error> appendResult = result.mapErr([](Error error) -> Error {
+        error.set("Error: Division by zero");
         return error;
     });
 

@@ -28,6 +28,7 @@ define _uninstall =
 		# xargs is linux only.
 		echo "Removing installed files.."
 		cat build/install_manifest.txt
+		xargs rm < build/install_manifest.txt
 		echo
 	fi
 endef
