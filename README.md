@@ -1,10 +1,12 @@
-# extra-templated-library
+<div align="center">
+  <img width="500" height="500" src="logo.png">
+</div>
+<div align="center">
+  <img src="https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square">
+  <br>
+  <p><b>Extra Template Library</b> for modern C++ development</p>
+</div>
 
-[![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
-
-Extra C++ templated classes for the modern C++ programmer
-
-TODO: Fill out this long description.
 
 ## Table of Contents
 
