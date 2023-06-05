@@ -33,15 +33,15 @@ PACKAGE_CONFIG: Dict[str, str] = {
 # Expected programs, here compilers are specified so different versions
 # can easily be swapped in and out by editing this file
 CMAKE_PROGRAMS: Dict[str, Dict[str, str]] = {
-    # Build in release mode, modify the flags accordingly
+    # Build in release mode, modify the flags accordingly.
     "CMAKE_RELEASE": {
         "name": "cmake",
         "flags": "-D ETL_DEV_MODE=OFF -D CMAKE_CXX_COMPILER=clang++",
     },
-    # Build in develop mode, modify the flags accordingly, *SLACKER_DEV_MODE=ON by default so no need to specify.
+    # Build in develop mode, modify the flags accordingly.
     "CMAKE_DEVELOP": {
         "name": "cmake",
-        "flags": "-D CMAKE_CXX_COMPILER=clang++",
+        "flags": "-D ETL_DEV_MODE=ON -D CMAKE_CXX_COMPILER=clang++",
     },
     # customize formatting and clang tidy through the flags
     "CLANG_FORMATTER": {"name": "clang-format", "flags": "-i"},

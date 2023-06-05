@@ -8,7 +8,7 @@ set(APP_EXAMPLES_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/examples")
 #
 # NOTE: Prevent in source builds (can't build in src/ or in project root)
 #
-if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR OR CMAKE_CURRENT_BINARY_DIR STREQUAL APP_SOURCE_DIR)
+if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR OR CMAKE_CURRENT_BINARY_DIR STREQUAL APP_INCLUDE_DIR)
   message(
     FATAL_ERROR
       "In source builds are not allowed. Please make a new directory (called a build directory) and run CMake from there."

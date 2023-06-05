@@ -19,23 +19,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 #
 # NOTE: add additional project options
 #
-option(ETL_DEV_MODE "Enables testing and example builds" ON)
+option(ETL_DEV_MODE "Enables testing and example builds" OFF)
 
 #
 # NOTE: Add our custom cmake modules to the cmake module path
 #
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
-#
-# NOTE: Creates interfaced "libraries" for
-# The custom StandardProjectSettings and CompilerWarnings.
-# These libraries can then be linked to the tests, examples and
-# release executables to ensure the correct c++ standard is used,
-# and all defined warnings are used.
-#
-add_library(project_options INTERFACE)
-target_compile_features(project_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
-add_library(project_warnings INTERFACE)
 
 #
 # NOTE: Include custom cmake dev-scripts, and the CPM package manager and add
@@ -47,7 +36,18 @@ include(StaticAnalyzers)
 include(CompilerWarnings)
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
-set_project_warnings(project_warnings)
+
+#
+# NOTE: Creates interfaced "libraries" for
+# The custom StandardProjectSettings and CompilerWarnings.
+# These libraries can then be linked to the tests, examples and
+# release executables to ensure the correct c++ standard is used,
+# and all defined warnings are used.
+#
+add_library(etl_project_options INTERFACE)
+target_compile_features(etl_project_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
+add_library(etl_project_warnings INTERFACE)
+set_project_warnings(etl_project_warnings)
 
 #
 # NOTE: FindPackage and CPM (Dependencies needed by all projects are defined at

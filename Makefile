@@ -64,7 +64,7 @@ test: dev
 	@cd build && ctest
 
 install: rel
-	@sudo cmake --install build
+	@cmake --install build
 
 uninstall:
 	@$(call _uninstall)

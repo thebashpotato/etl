@@ -19,15 +19,52 @@
 
 ## Install
 
+### Add to your project directly (manual way)
+
+[Copy the single header file](extra-template-library/etl/include/etl.hpp) into your project.
+
+### The global manual way
+
+Will install the single header file and Cmake configuration modules
+
+``` bash
+sudo make install
+
+# Example output
+-- Install configuration: "Release"
+-- Up-to-date: /usr/local/include
+-- Up-to-date: /usr/local/include/etl.hpp
+-- Installing: /usr/local/lib/Etl/cmake/EtlConfig.cmake
+-- Installing: /usr/local/lib/Etl/cmake/EtlConfigVersion.cmake
 ```
+
+To remove on linux (relies on xargs)
+``` bash
+sudo make uninstall
+```
+
+### CPM (The package manager way)
+
+Please check out how to use [CPM](https://github.com/cpm-cmake/CPM.cmake) it is dead simple.
+
+```cmake
+CPMAddPackage("gh:thebashpotato/extra-template-library@0.1.0")
 ```
 
 ## Usage
 
-```
+[Please see the unit tests](extra-template-library/etl/tests) for examples for each class.
+[Please see the example](extra-template-library/etl/examples/blackjack.cpp) for an example blackjack program utilizing the classes to solve real world problems.
+
+
+```cpp
+#include <etl.hpp>
+
 ```
 
 ## API
+
+TODO
 
 ## Maintainers
 
