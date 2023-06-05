@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.18)
 #
 project(
   etl
-  VERSION 0.1.0
+  VERSION 0.2.0
   DESCRIPTION "C++ Extra Template Library"
   HOMEPAGE_URL "https://github.com/thebashpotato/etl"
   LANGUAGES CXX)

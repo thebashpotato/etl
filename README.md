@@ -48,7 +48,7 @@ sudo make uninstall
 Please check out how to use [CPM](https://github.com/cpm-cmake/CPM.cmake) it is dead simple.
 
 ```cmake
-CPMAddPackage("gh:thebashpotato/extra-template-library@0.1.0")
+CPMAddPackage("gh:thebashpotato/extra-template-library@0.2.0")
 ```
 
 ## Usage
@@ -59,7 +59,6 @@ CPMAddPackage("gh:thebashpotato/extra-template-library@0.1.0")
 
 ```cpp
 #include <etl.hpp>
-
 ```
 
 ## API
