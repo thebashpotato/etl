@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.18)
 #
 project(
   etl
-  VERSION 0.2.0
+  VERSION 0.4.0
   DESCRIPTION "C++ Extra Template Library"
   HOMEPAGE_URL "https://github.com/thebashpotato/etl"
   LANGUAGES CXX)
@@ -24,7 +24,7 @@ option(ETL_DEV_MODE "Enables testing and example builds" OFF)
 #
 # NOTE: Add our custom cmake modules to the cmake module path
 #
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 #
 # NOTE: Include custom cmake dev-scripts, and the CPM package manager and add
@@ -71,7 +71,7 @@ if(ETL_DEV_MODE)
     VERSION
     1.13.0
     OPTIONS
-    "BUILD_GMOCK ON"
+    "BUILD_GMOCK OFF"
     "INSTALL_GTEST OFF"
     "gtest_force_shared_crt ON")
   if(googletest_ADDED)

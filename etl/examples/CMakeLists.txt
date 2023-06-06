@@ -10,5 +10,5 @@ add_executable(${Blackjack} "${APP_EXAMPLES_SOURCE_DIR}/blackjack.cpp" ${UTILS_S
 target_include_directories(${ScratchFile} PUBLIC ${APP_INCLUDE_DIR})
 target_include_directories(${Blackjack} PUBLIC ${APP_INCLUDE_DIR})
 
-target_link_libraries(${ScratchFile} PRIVATE project_options project_warnings)
-target_link_libraries(${Blackjack} PRIVATE project_options project_warnings)
+target_link_libraries(${ScratchFile} PRIVATE etl_project_options etl_project_warnings)
+target_link_libraries(${Blackjack} PRIVATE etl_project_options etl_project_warnings)
