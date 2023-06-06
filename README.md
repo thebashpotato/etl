@@ -48,7 +48,25 @@ sudo make uninstall
 Please check out how to use [CPM](https://github.com/cpm-cmake/CPM.cmake) it is dead simple.
 
 ```cmake
-CPMAddPackage("gh:thebashpotato/extra-template-library@0.2.0")
+cpmaddpackage(
+  NAME
+  etl
+  GITHUB_REPOSITORY
+  thebashpotato/extra-template-library
+  VERSION
+  0.4.0)
+
+if(etl_ADDED)
+  message(STATUS "Extra Template Library added")
+  add_library(etl::etl INTERFACE IMPORTED)
+  target_include_directories(etl::etl INTERFACE ${etl_SOURCE_DIR}/etl/include)
+endif()
+
+
+# Your Application linking cmake code
+target_link_libraries(
+  your_awesome_project
+  PRIVATE etl::etl)
 ```
 
 ## Usage
