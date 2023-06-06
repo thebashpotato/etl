@@ -5,7 +5,7 @@ set(ETL_VERSION @PROJECT_VERSION@)
 include(FindPackageHandleStandardArgs)
 
 set_and_check(ETL_INCLUDE_DIR "@PACKAGE_INCLUDE_INSTALL_DIR@")
-set(RDMPP_WRAPPER_LIBRARY rdmppwrapper)
-set(RDMPP_WRAPPER_FOUND yes)
+set(ETL_LIBRARY rdmppwrapper)
+set(ETL_FOUND yes)
 
 check_required_components(Etl)
