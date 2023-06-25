@@ -11,6 +11,7 @@
 ## Table of Contents
 
 - [Install](#install)
+- [CmakeUsage](#cmakeusage)
 - [Usage](#usage)
 - [API](#api)
 - [Maintainers](#maintainers)
@@ -23,25 +24,30 @@
 
 [Copy the single header file](extra-template-library/etl/include/etl.hpp) into your project.
 
+Or you can download the `etl.hpp` file from the latest [Releases](https://github.com/thebashpotato/extra-template-library/releases)
+
 ### The global manual way
 
 Will install the single header file and Cmake configuration modules
 
 ``` bash
-sudo make install
+make install
 
 # Example output
 -- Install configuration: "Release"
 -- Up-to-date: /usr/local/include
 -- Up-to-date: /usr/local/include/etl.hpp
--- Installing: /usr/local/lib/Etl/cmake/EtlConfig.cmake
--- Installing: /usr/local/lib/Etl/cmake/EtlConfigVersion.cmake
+-- Installing: /usr/local/share/pkgconfig/etl.pc
+-- Installing: /usr/local/share/cmake/etl/etlConfigVersion.cmake
+-- Installing: /usr/local/share/cmake/etl/etlConfig.cmake
 ```
 
 To remove on linux (relies on xargs)
 ``` bash
-sudo make uninstall
+make uninstall
 ```
+
+## CmakeUsage
 
 ### CPM (The package manager way)
 
@@ -54,7 +60,7 @@ cpmaddpackage(
   GITHUB_REPOSITORY
   thebashpotato/extra-template-library
   VERSION
-  0.4.0)
+  0.5.0)
 
 if(etl_ADDED)
   message(STATUS "Extra Template Library added")
@@ -67,6 +73,29 @@ endif()
 target_link_libraries(
   your_awesome_project
   PRIVATE etl::etl)
+```
+
+### Find Package
+
+```cmake 
+find_package(etl 0.5.0 REQUIRED)
+
+# Your Application linking cmake code
+target_link_libraries(
+  your_awesome_project
+  PRIVATE etl::etl)
+```
+
+
+### Package Config
+
+```cmake
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(etl REQUIRED etl)
+
+# Your Application linking cmake code
+target_link_libraries(your_awesome_project PUBLIC ${etl_LIBRARIES})
+target_include_directories(your_awesome_project PUBLIC ${etl_INCLUDE_DIRS})
 ```
 
 ## Usage
