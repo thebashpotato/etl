@@ -1,20 +1,14 @@
 cmake_minimum_required(VERSION 3.18)
 
 #
-# NOTE: Set workspace name, and language.
+# NOTE: Set project meta data
 #
 project(
   etl
-  VERSION 0.4.0
+  VERSION 0.5.0
   DESCRIPTION "C++ Extra Template Library"
   HOMEPAGE_URL "https://github.com/thebashpotato/etl"
   LANGUAGES CXX)
-
-#
-# NOTE: Set the C++ standard
-#
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 #
 # NOTE: add additional project options
@@ -35,7 +29,27 @@ include(StandardProjectSettings)
 include(StaticAnalyzers)
 include(CompilerWarnings)
 include(GNUInstallDirs)
-include(CMakePackageConfigHelpers)
+
+#
+# NOTE: Custom variables for installation/configuration
+#
+set(ETL_TARGET_NAME ${PROJECT_NAME})
+set(ETL_CMAKE_CONFIG_INSTALL_DIR
+    "${CMAKE_INSTALL_DATADIR}/cmake/${PROJECT_NAME}"
+    CACHE INTERNAL "")
+set(ETL_INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}")
+set(ETL_CMAKE_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+set(ETL_PKG_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/pkgconfig")
+
+# Templated install files
+set(ETL_CMAKE_PROJECT_CONFIG_TEMPLATE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake.in")
+set(ETL_CMAKE_VERSION_CONFIG_TEMPLATE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/ConfigVersion.cmake.in")
+set(ETL_PKG_CONFIG_TEMPLATE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/PkgConfig.pc.in")
+
+# Install files that will be generated from the above templated install files
+set(ETL_CMAKE_VERSION_CONFIG_FILE "${ETL_CMAKE_CONFIG_DIR}/${ETL_TARGET_NAME}ConfigVersion.cmake")
+set(ETL_CMAKE_PROJECT_CONFIG_FILE "${ETL_CMAKE_CONFIG_DIR}/${ETL_TARGET_NAME}Config.cmake")
+set(ETL_PKG_CONFIG_FILE "${ETL_CMAKE_CONFIG_DIR}/${ETL_TARGET_NAME}.pc")
 
 #
 # NOTE: Creates interfaced "libraries" for

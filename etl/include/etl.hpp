@@ -53,13 +53,13 @@ namespace etl {
         /// @brief Default constructor builds an instance to the first value
         /// in the enumeration.
         ///
-        /// @details  Used in the begin() method.
+        /// @details Used in the begin() method.
         EnumerationIterator() noexcept : value_(static_cast<value_t>(beginValue)) {}
 
 
         /// @brief Constructs an instance to a specified value.
         ///
-        /// @details  Used in the end() method.
+        /// @details Used in the end() method.
         explicit EnumerationIterator(const EnumIterable &iter) noexcept
             : value_(static_cast<value_t>(iter)) {}
 
@@ -74,7 +74,7 @@ namespace etl {
     public:
         /// @brief ++this overload
         ///
-        /// @details  Increments the underlying value and then returns
+        /// @details Increments the underlying value and then returns
         /// an instance of itself. this++ not implemented, as it is
         /// ineffecient and usually not needed.
         [[maybe_unused]] auto operator++() noexcept -> EnumerationIterator {
@@ -169,7 +169,7 @@ namespace etl {
 
 
     /// @brief Holds useful runtime source code location information for use in Errors.
-    /// 
+    ///
     /// @details Should not be used directly, rather the user should pass the `etl::RUNTIME_INFO`
     /// macro invocation.
     class SourceCodeLocation {
@@ -255,16 +255,16 @@ namespace etl {
 
     private:
         /// @brief Constructs the error with only a message
-        ///  
+        ///
         /// @details This constructor is private to prevent the user from circumventing the create() method
         explicit Error(std::string_view const &msg) noexcept : msg_(msg) {}
 
 
         /// @brief Constructs the error with the message and source location
         /// using move semantics
-        /// 
+        ///
         /// @details This constructor is private to prevent the user from circumventing the create() method
-        /// 
+        ///
         /// @param `msg` the error message
         /// @param `slc` the source code location object
         Error(std::string_view const &msg, SourceCodeLocation &&slc) noexcept : msg_(msg) {
@@ -321,7 +321,7 @@ namespace etl {
 
 
         /// @brief Get the pre-formatted (pretty printed) error string.
-        /// 
+        ///
         /// @details  If Error was not created with the RUNTIME_INFO macro info_ will be empty,
         /// in which case the msg_ will be returned instead.
         [[nodiscard]] inline auto info() const noexcept -> std::string override {
@@ -335,7 +335,7 @@ namespace etl {
 
     /// @brief Empty stub type for when the user wants a result with an Ok type
     /// with no value, since c++ doesn't have rusts () type, this is my workaround.
-    /// 
+    ///
     /// @details In Rust it would be Result<(), String>.
     /// Converted into this C++ class would be, Result<Void, std::string>.
     class Void {};
@@ -377,9 +377,9 @@ namespace etl {
 
 
         /// @brief Get the OkType value
-        /// 
+        ///
         /// @details The use should always use isOk() before using ok()
-        /// 
+        ///
         /// @return std::optinal<OkType> for safety, incase the user did not call
         /// isOk() before using this method.
         [[nodiscard]] inline auto ok() const noexcept -> std::optional<OkType> {
@@ -393,9 +393,9 @@ namespace etl {
 
 
         /// @brief Get the ErrType value
-        /// 
+        ///
         /// @details The use should always use isErr() before using err()
-        /// 
+        ///
         /// @return std::optinal<ErrType> for safety, incase the user did not call
         /// isErr() before using this method.
         [[nodiscard]] inline auto err() const noexcept -> std::optional<ErrType> {
@@ -409,9 +409,9 @@ namespace etl {
 
 
         /// @brief Maps a custom/lambda function to the [OkType] leaving the [ErrType] untouched.
-        /// 
+        ///
         /// @details The use should always use isOk() before using map()
-        /// 
+        ///
         /// @return Returns the Result type with a modified OkType, or just the Result unmodified
         /// if isOK() is false.
         template<typename Function>
@@ -428,9 +428,9 @@ namespace etl {
 
 
         /// @brief Maps a custom/lambda function to the [ErrType] leaving the [OkType] untouched.
-        /// 
+        ///
         /// @details The use should always use the isErr() method before using mapErr().
-        /// 
+        ///
         /// @return Returns the Result type with a modified ErrType, or just the Result unmodified
         /// if isErr() is false.
         template<typename Function>
@@ -448,7 +448,7 @@ namespace etl {
 
 
     /// @brief Result Template Specialization for std::unique_ptr.
-    /// 
+    ///
     /// @details Since std::unique_ptr is a move only type, the generic Result implementation
     /// confuses which constructors are to be used and its not enough. Objects with deleted copy constructors
     /// will need a templated specialization. You can use this specialiation for your custom type as
@@ -460,7 +460,7 @@ namespace etl {
         bool isOk_;
 
     public:
-        /// 
+        /// @brief All the constructors needed to build an OkType or ErrType for a move only type
         explicit Result(std::unique_ptr<OkType> &&value) : result_(std::move(value)), isOk_(true) {}
         explicit Result(const ErrType &error) : result_(error), isOk_(false) {}
         explicit Result(ErrType &&error) : result_(std::move(error)), isOk_(false) {}
@@ -478,11 +478,10 @@ namespace etl {
         }
 
 
-        
         /// @brief Gets the [OkType] value from the variant
-        /// 
+        ///
         /// @details The user should always use the isOk() method before using ok()
-        /// 
+        ///
         /// @return std::optinal<OkType> for safety, incase the user did not call
         /// isOk() before using this method.
         [[nodiscard]] inline auto ok() const noexcept -> std::optional<std::unique_ptr<OkType>> {

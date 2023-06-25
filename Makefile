@@ -28,7 +28,7 @@ define _uninstall =
 		# xargs is linux only.
 		echo "Removing installed files.."
 		cat build/install_manifest.txt
-		xargs rm < build/install_manifest.txt
+		sudo xargs rm < build/install_manifest.txt
 		echo
 	fi
 endef
@@ -64,7 +64,7 @@ test: dev
 	@cd build && ctest
 
 install: rel
-	@cmake --install build
+	@sudo cmake --install build
 
 uninstall:
 	@$(call _uninstall)

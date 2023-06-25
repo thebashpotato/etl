@@ -34,25 +34,36 @@ endif()
 message(STATUS "${PROJECT_NAME}-${PROJECT_VERSION} [${CMAKE_BUILD_TYPE}]")
 
 #
-# NOTE: Configures cmake config and version files
-#
-configure_package_config_file(EtlConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/EtlConfig.cmake
-                              INSTALL_DESTINATION ${LIB_INSTALL_DIR}/Etl/cmake)
-write_basic_package_version_file(
-  ${CMAKE_CURRENT_BINARY_DIR}/EtlConfigVersion.cmake
-  VERSION ${PROJECT_VERSION}
-  COMPATIBILITY SameMajorVersion)
-
-#
 # NOTE: Target as header only library
 #
-add_library(${PROJECT_NAME} INTERFACE)
-target_include_directories(${PROJECT_NAME} INTERFACE $<BUILD_INTERFACE>:${APP_INCLUDE_DIR}>
-                                                     $<INSTALL_INTERFACE:include>)
+add_library(${ETL_TARGET_NAME} INTERFACE)
+add_library(${PROJECT_NAME}::${ETL_TARGET_NAME} ALIAS ${ETL_TARGET_NAME})
+target_compile_features(${ETL_TARGET_NAME} INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
+target_include_directories(${PROJECT_NAME} INTERFACE $<BUILD_INTERFACE:${APP_INCLUDE_DIR}> $<INSTALL_INTERFACE:include>)
 
 #
-# NOTE: Installs the header file and the configuration files
+# NOTE: Package/Configure and Installation.
+# Only execute this code if we are not in developer mode.
 #
-install(DIRECTORY "${APP_INCLUDE_DIR}/" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/EtlConfig.cmake ${CMAKE_CURRENT_BINARY_DIR}/EtlConfigVersion.cmake
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/Etl/cmake)
+if(NOT ETL_DEV_MODE)
+  include(CMakePackageConfigHelpers)
+
+  # Configure pkg-config file
+  configure_file(${ETL_PKG_CONFIG_TEMPLATE} ${ETL_PKG_CONFIG_FILE} @ONLY)
+
+  # Configure Cmake project config file
+  configure_file(${ETL_CMAKE_PROJECT_CONFIG_TEMPLATE} ${ETL_CMAKE_PROJECT_CONFIG_FILE} @ONLY)
+
+  # Configure Cmake version file
+  configure_file(${ETL_CMAKE_VERSION_CONFIG_TEMPLATE} ${ETL_CMAKE_VERSION_CONFIG_FILE} @ONLY)
+
+  # Install the header file
+  install(DIRECTORY "${APP_INCLUDE_DIR}/" DESTINATION ${ETL_INCLUDE_INSTALL_DIR})
+
+  # Install the pkg-config file
+  install(FILES ${ETL_PKG_CONFIG_FILE} DESTINATION ${ETL_PKG_CONFIG_INSTALL_DIR})
+
+  # Install the Cmake config files
+  install(FILES ${ETL_CMAKE_VERSION_CONFIG_FILE} ${ETL_CMAKE_PROJECT_CONFIG_FILE}
+          DESTINATION ${ETL_CMAKE_CONFIG_INSTALL_DIR})
+endif()
