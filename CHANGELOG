@@ -3,6 +3,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2023-06-25
+
+### Added
+- Cmake installation files have been re-worked based on nlohmann_json cmake
+  so they work properly when find_package(etl VERSION REQUIRED) is used
+
+- Package Config support added so other build systems can find and use etl easily.
+
+### Changed
+
+- Comment style has been changed from the cumbersom /**/ to ///
+
+- Comment descriptions have also been fixed and updated
+
 ## [0.1.0] - 2023-05-26
 
 ### Added
@@ -24,6 +38,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   as the lambda won't be invokable, it must be passed as a copyable object, since it is converted into a const reference
   in the actual std::invoke call. Otherwise it will not run.
 
-## Reverse chronological release ordering.
-
-[1.1.0]: https://github.com/olivierlacan/keep-a-changelog/compare/v1.0.0...v1.1.0
