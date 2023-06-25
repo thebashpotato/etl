@@ -2,6 +2,7 @@
   <img width="500" height="500" src="logo.png">
 </div>
 <div align="center">
+  <img alt="GitHub Workflow Status (with event)" src="https://img.shields.io/github/actions/workflow/status/thebashpotato/extra-template-library/cmake.yml?style=flat-square&logo=ubuntu&label=Build%20Status">
   <img src="https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square">
   <img alt="GitHub Release Date - Published_At" src="https://img.shields.io/github/release-date/thebashpotato/extra-template-library?style=flat-square">
   <img alt="GitHub" src="https://img.shields.io/github/license/thebashpotato/extra-template-library?style=flat-square">
