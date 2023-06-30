@@ -14,8 +14,7 @@
 ## Table of Contents
 
 - [Etl](#etl)
-- [Install](#install)
-- [CmakeUsage](#cmakeusage)
+- [Integration](#integration)
 - [Usage](#usage)
 - [API](#api)
 - [Maintainers](#maintainers)
@@ -65,17 +64,16 @@ the generic Result<T, E> does not work for your type. This will most likely only
 like so `auto someFunction(std::string const &param) -> etl::Result<std::int32_t, etl::IError>` well you can do that no problem.
 
 
-## Install
+## Integration
 
-### Add to your project directly (manual way)
 
 [Copy the single header file](extra-template-library/etl/include/etl.hpp) into your project.
 
 Or you can download the `etl.hpp` file from the latest [Releases](https://github.com/thebashpotato/extra-template-library/releases)
 
-### The global manual way
+### Install globally on your system
 
-Will install the single header file and Cmake configuration modules
+Will install the single header file and Cmake configuration modules, which `find_package` can use.
 
 ```bash
 make install
@@ -87,6 +85,7 @@ make install
 -- Installing: /usr/local/share/pkgconfig/etl.pc
 -- Installing: /usr/local/share/cmake/etl/etlConfigVersion.cmake
 -- Installing: /usr/local/share/cmake/etl/etlConfig.cmake
+-- Installing: /usr/local/share/cmake/etl/etlTargets.cmake
 ```
 
 To remove on linux (relies on xargs)
@@ -95,9 +94,9 @@ To remove on linux (relies on xargs)
 make uninstall
 ```
 
-## CmakeUsage
+### Cmake
 
-### CPM (The package manager way)
+#### CPM (The package manager way)
 
 Please check out how to use [CPM](https://github.com/cpm-cmake/CPM.cmake) it is dead simple.
 
@@ -136,13 +135,23 @@ target_link_libraries(
 
 ### Package Config
 
+#### Cmake
+
 ```cmake
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(etl REQUIRED etl)
+find_package(PkgConfig REQUIRED IMPORTED_TARGET GLOBAL)
+pkg_check_modules(Etl REQUIRED etl)
 
 # Your Application linking cmake code
-target_link_libraries(your_awesome_project PUBLIC ${etl_LIBRARIES})
+target_link_libraries(your_awesome_project PUBLIC PkgConfig::Etl)
 target_include_directories(your_awesome_project PUBLIC ${etl_INCLUDE_DIRS})
+```
+
+#### Bare Makefile
+
+If you are using bare Makefiles, you can use `pkg-config` to generate the include flags that point to where the library is installed.
+
+```bash
+pkg-config etl --clfags
 ```
 
 ## Usage

@@ -34,22 +34,26 @@ include(GNUInstallDirs)
 # NOTE: Custom variables for installation/configuration
 #
 set(ETL_TARGET_NAME ${PROJECT_NAME})
+set(ETL_CMAKE_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+
+# Install directories
 set(ETL_CMAKE_CONFIG_INSTALL_DIR
     "${CMAKE_INSTALL_DATADIR}/cmake/${PROJECT_NAME}"
     CACHE INTERNAL "")
 set(ETL_INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}")
-set(ETL_CMAKE_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 set(ETL_PKG_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/pkgconfig")
 
 # Templated install files
 set(ETL_CMAKE_PROJECT_CONFIG_TEMPLATE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake.in")
 set(ETL_CMAKE_VERSION_CONFIG_TEMPLATE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/ConfigVersion.cmake.in")
 set(ETL_PKG_CONFIG_TEMPLATE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/PkgConfig.pc.in")
+set(ETL_TARGETS_EXPORT_NAME "${PROJECT_NAME}Targets")
 
 # Install files that will be generated from the above templated install files
 set(ETL_CMAKE_VERSION_CONFIG_FILE "${ETL_CMAKE_CONFIG_DIR}/${ETL_TARGET_NAME}ConfigVersion.cmake")
 set(ETL_CMAKE_PROJECT_CONFIG_FILE "${ETL_CMAKE_CONFIG_DIR}/${ETL_TARGET_NAME}Config.cmake")
 set(ETL_PKG_CONFIG_FILE "${ETL_CMAKE_CONFIG_DIR}/${ETL_TARGET_NAME}.pc")
+set(ETL_CMAKE_PROJECT_TARGETS_FILE "${ETL_CMAKE_CONFIG_DIR}/${PROJECT_NAME}Targets.cmake")
 
 #
 # NOTE: Creates interfaced "libraries" for
