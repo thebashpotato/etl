@@ -1,17 +1,15 @@
-/**
- * The black jack code is from the youtube channel Dave's Garage.
- * Here is the link to the video: https://youtu.be/b8V-WIjlScA
- * Give him a like and subscribe, he makes great content.
- *
- * The link to Daves repository with the original code is here: https://github.com/davepl/blackjack
- *
- * In the video Dave does some manual iteration over a C style enum.
- * At the time stamp 8:30 he says "One unfortunate part about C++
- * is that it doesn't provide a way to get the lowest and highest values in an enumeration".
- * Which he is correct. However it is quite easily done, so I decided to write a template
- * class that can provide this functionality for basically any contigious enum class and use his black jack code
- * to show case it.
- * */
+/// The black jack code is from the youtube channel Dave's Garage.
+/// Give him a like and subscribe, he makes great content.
+///
+/// @link Link to the video: https://youtu.be/b8V-WIjlScA
+/// @link Original code: https://github.com/davepl/blackjack
+///
+/// In the video Dave does some manual iteration over a C style enum.
+/// At the time stamp 8:30 he says "One unfortunate part about C++
+/// is that it doesn't provide a way to get the lowest and highest values in an enumeration".
+/// Which he is correct. Since this was a problem I had already solved for myself I though his
+/// viewers might like to see a solution to this problem.
+
 #include <algorithm>
 #include <cstdlib>
 #include <ctime>
