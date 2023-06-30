@@ -65,27 +65,23 @@ namespace blackjack {
 
     class Deck {
     public:
-        using DealableCard = std::unique_ptr<Card>;
+        using UniqueCard = std::unique_ptr<Card>;
 
     private:
-        /**
-         * @brief Here is where we use the etl generic enum iterator class
-         * */
+        /// @brief Here is where we use the etl generic enum iterator class
         using RankIterator =
                 EnumerationIterator<Rank, Rank::ACE, Rank::KING>;
         using SuitIterator =
                 EnumerationIterator<Suit, Suit::HEARTS, Suit::SPADES>;
 
     private:
-        std::vector<DealableCard> cards_;
+        std::vector<UniqueCard> cards_;
 
     public:
-        /**
-         * @brief Builds a 52 card deck of 13 ranks with 4 suits,
-         *
-         * @detail Uses the custom EnumerationIterator template class to showcase
-         * the C++ ability to iterate over enums.
-         * */
+        /// @brief Builds a 52 card deck of 13 ranks with 4 suits,
+        ///
+        /// @details Uses the custom EnumerationIterator template class to showcase
+        /// the C++ ability to iterate over enums.
         Deck() {
             for (const auto &suit: SuitIterator()) {
                 for (const auto &rank: RankIterator()) {
@@ -94,41 +90,37 @@ namespace blackjack {
             }
         }
 
-        /**
-         * @brief How many cards are in the deck
-         * */
+        /// @brief How many cards are in the deck
         [[nodiscard]] auto size() -> std::size_t { return cards_.size(); }
 
-        /**
-         * @brief Uses a random number and The classic Mersenne Twister,
-         * random number generator to shuffle the deck.
-         * */
+        /// @brief Uses a random number and The classic Mersenne Twister,
+        /// random number generator to shuffle the deck.
         auto shuffleDeck() {
             std::random_device random_number;
             std::mt19937 generator(random_number());
             std::shuffle(cards_.begin(), cards_.end(), generator);
         }
 
-        /**
-         * @brief Returns a Result<OkType, ErrType>
-         * */
-        [[nodiscard]] auto drawCard() -> Result<DealableCard, Error> {
+        /// @brief Draws a single card from the deck if it isn't emptpy.
+        ///
+        /// @returns Result<UniqueCard, Error>
+        [[nodiscard]] auto drawCard() -> Result<UniqueCard, Error> {
             if (cards_.empty()) {
-                return Result<DealableCard, Error>(Error::create("Deck is empty", RUNTIME_INFO));
+                return Result<UniqueCard, Error>(Error::create("Deck is empty", RUNTIME_INFO));
             }
             auto card = std::move(cards_.back());
             cards_.pop_back();
-            return Result<DealableCard, Error>(std::move(card));
+            return Result<UniqueCard, Error>(std::move(card));
         }
     };
 
 
     class Player {
     private:
-        std::vector<Deck::DealableCard> hand_;
+        std::vector<Deck::UniqueCard> hand_;
 
     public:
-        auto addCard(Deck::DealableCard &&card) noexcept {
+        auto addCard(Deck::UniqueCard &&card) noexcept {
             hand_.emplace_back(std::move(card));
         }
 
