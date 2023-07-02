@@ -60,8 +60,8 @@ the generic Result<T, E> does not work for your type. This will most likely only
   [SourceCodeLocation](https://github.com/thebashpotato/extra-template-library/blob/f1dcd42141c26f4826283d84ec39f87d364be621/etl/include/etl.hpp#L224) macro which the Error class supports, and can easily be returned in the afore-mentioned `Result<T, E>` object for more Rust like
   behaviour.
 
-- `etl::Error` implements [etl::IError](https://github.com/thebashpotato/extra-template-library/blob/f1dcd42141c26f4826283d84ec39f87d364be621/etl/include/etl.hpp#L234), so if you want to make your own custom errors that play nicely with  `Result<T, E>`, and beable to return a polymorphic error
-like so `auto someFunction(std::string const &param) -> etl::Result<std::int32_t, etl::IError>` well you can do that no problem.
+- `etl::Error` implements [etl::IError](https://github.com/thebashpotato/extra-template-library/blob/f1dcd42141c26f4826283d84ec39f87d364be621/etl/include/etl.hpp#L234), so if you want to make your own custom errors that play nicely with  `Result<T, E>`, as well as return a polymorphic error
+like so `auto someFunction(std::string const &param) -> etl::Result<std::int32_t, std::shared_ptr<etl::IError>>` well you can do that.
 
 
 ## Integration
@@ -96,6 +96,17 @@ make uninstall
 
 ### Cmake
 
+### Find Package
+
+```cmake
+find_package(etl 0.5.0 REQUIRED)
+
+# Your Application linking cmake code
+target_link_libraries(
+  your_awesome_project
+  PRIVATE etl::etl)
+```
+
 #### CPM (The package manager way)
 
 Please check out how to use [CPM](https://github.com/cpm-cmake/CPM.cmake) it is dead simple.
@@ -122,17 +133,6 @@ target_link_libraries(
   PRIVATE etl::etl)
 ```
 
-### Find Package
-
-```cmake
-find_package(etl 0.5.0 REQUIRED)
-
-# Your Application linking cmake code
-target_link_libraries(
-  your_awesome_project
-  PRIVATE etl::etl)
-```
-
 ### Package Config
 
 #### Cmake
@@ -143,7 +143,7 @@ pkg_check_modules(Etl REQUIRED etl)
 
 # Your Application linking cmake code
 target_link_libraries(your_awesome_project PUBLIC PkgConfig::Etl)
-target_include_directories(your_awesome_project PUBLIC ${etl_INCLUDE_DIRS})
+target_include_directories(your_awesome_project PUBLIC ${Etl_INCLUDE_DIRS})
 ```
 
 #### Bare Makefile
@@ -156,8 +156,8 @@ pkg-config etl --clfags
 
 ## Usage
 
-[Please see the unit tests](extra-template-library/etl/tests) for examples for each class.
-[Please see the example](extra-template-library/etl/examples/blackjack.cpp) for an example blackjack program utilizing the classes to solve real world problems.
+[Please see the unit tests](extra-template-library/etl/tests) for bite size examples for each class.
+[Please see](extra-template-library/etl/examples/blackjack.cpp) for an example blackjack program utilizing etl to solve real world problems.
 
 ```cpp
 #include <etl.hpp>
