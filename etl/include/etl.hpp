@@ -20,9 +20,7 @@
 /// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 /// SOFTWARE.
-
-#ifndef ETL_HPP
-#define ETL_HPP
+#pragma once
 
 #if __cplusplus >= 201702L
 
@@ -516,5 +514,3 @@ namespace etl {
 }// namespace etl
 
 #endif// __cplusplus >= 201702l
-
-#endif// ETL_HPP

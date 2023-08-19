@@ -9,6 +9,7 @@
 /// is that it doesn't provide a way to get the lowest and highest values in an enumeration".
 /// Which he is correct. Since this was a problem I had already solved for myself I thought
 /// I would share my solution with him and the world (if anyone ever sees this).
+#pragma once
 
 #include <algorithm>
 #include <cstdlib>
