@@ -16,7 +16,6 @@
 - [Etl](#etl)
 - [Integration](#integration)
 - [Usage](#usage)
-- [API](#api)
 - [Maintainers](#maintainers)
 - [Contributing](#contributing)
 - [License](#license)
@@ -39,8 +38,8 @@ its a single header file, at roughly 500 lines of code. A nice and easy read wit
   the Result<OkType, ErrType> attempts to be as close to the Rust langauges implementation as possible,
   and may be just what your looking for to ditch those try/catch error handling blocks.
 
-- There is also a [template specialiazation for std::unique_ptr](https://github.com/thebashpotato/extra-template-library/blob/f1dcd42141c26f4826283d84ec39f87d364be621/etl/include/etl.hpp#L457) that can be used as a starting point for you own specialization if
-the generic Result<T, E> does not work for your type. This will most likely only be the case for move only types.
+- One current catch with the Result<T, E> type is if you have a **move only type** you will need to hi-jack the etl namespace
+  and create a template specialization for it, but don't worry it's easy. I have provided an example [here](https://github.com/thebashpotato/extra-template-library/blob/main/etl/examples/moveonly) which you can copy and paste, (Just replace the name of the the class with your own).
 
 2. [etl::EnumerationIterator<IteratorName, IteratorBegin, IteratorEnd>](https://github.com/thebashpotato/extra-template-library/blob/main/etl/tests/enum_iterable_test.cpp)
 
@@ -157,15 +156,12 @@ pkg-config etl --clfags
 ## Usage
 
 [Please see the unit tests](extra-template-library/etl/tests) for bite size examples for each class.
-[Please see](extra-template-library/etl/examples/blackjack.cpp) for an example blackjack program utilizing etl to solve real world problems.
+[Please see](extra-template-library/etl/examples/blackjack) for an example blackjack program utilizing etl to solve real world problems.
+[Please see](extra-template-library/etl/examples/moveonly) for an example for a Result<T, E> move only class template specialization.
 
 ```cpp
 #include <etl.hpp>
 ```
-
-## API
-
-TODO
 
 ## Maintainers
 

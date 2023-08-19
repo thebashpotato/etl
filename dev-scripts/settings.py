@@ -36,12 +36,12 @@ CMAKE_PROGRAMS: Dict[str, Dict[str, str]] = {
     # Build in release mode, modify the flags accordingly.
     "CMAKE_RELEASE": {
         "name": "cmake",
-        "flags": "-D ETL_DEV_MODE=OFF -D CMAKE_CXX_COMPILER=clang++",
+        "flags": "-D ETL_DEV_MODE=OFF -D CMAKE_CXX_COMPILER=clang++-14",
     },
     # Build in develop mode, modify the flags accordingly.
     "CMAKE_DEVELOP": {
         "name": "cmake",
-        "flags": "-D ETL_DEV_MODE=ON -D CMAKE_CXX_COMPILER=clang++",
+        "flags": "-D ETL_DEV_MODE=ON -D CMAKE_CXX_COMPILER=clang++-14",
     },
     # customize formatting and clang tidy through the flags
     "CLANG_FORMATTER": {"name": "clang-format", "flags": "-i"},

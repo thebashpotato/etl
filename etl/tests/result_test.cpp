@@ -20,6 +20,18 @@ TEST(EtlResult, ResultOkTypeTest) {
     ASSERT_EQ(result.ok().value(), 2);
 }
 
+TEST(EtlResult, ResultOkTypeTestDefaultConstructor) {
+    constexpr auto numerator = 10;
+    constexpr auto denominator = 5;
+
+    Result<int, Error> result{};
+
+    result = divide(numerator, denominator);
+    ASSERT_TRUE(result.isOk());
+    ASSERT_FALSE(result.isErr());
+    ASSERT_EQ(result.ok().value(), 2);
+}
+
 TEST(EtlResult, ResultOkTypeMapTest) {
     constexpr auto numerator = 10;
     constexpr auto denominator = 5;

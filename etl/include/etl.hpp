@@ -1,6 +1,7 @@
 /// MIT License
 ///
-/// Copyright (c) 2023 Matt Williams
+/// Copyright (c) 2023 Matt Williams (matt.k.williams@protonmail.com)
+/// Original Source: https://github.com/thebashpotato/extra-template-library
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy
 /// of this software and associated documentation files (the "Software"), to deal
@@ -47,21 +48,21 @@ namespace etl {
         ///
         /// @link https://en.cppreference.com/w/cpp/types/underlying_type
         using value_t = typename std::underlying_type<EnumIterable>::type;
-        std::int64_t value_;
+        std::int64_t _value;
 
     public:
         /// @brief Default constructor builds an instance to the first value
         /// in the enumeration.
         ///
         /// @details Used in the begin() method.
-        EnumerationIterator() noexcept : value_(static_cast<value_t>(beginValue)) {}
+        EnumerationIterator() noexcept : _value(static_cast<value_t>(beginValue)) {}
 
 
         /// @brief Constructs an instance to a specified value.
         ///
         /// @details Used in the end() method.
-        explicit EnumerationIterator(const EnumIterable &iter) noexcept
-            : value_(static_cast<value_t>(iter)) {}
+        explicit EnumerationIterator(EnumIterable const &iter) noexcept
+            : _value(static_cast<value_t>(iter)) {}
 
 
         /// @brief Default Destructor Move/Copy constructor and assignment
@@ -78,7 +79,7 @@ namespace etl {
         /// an instance of itself. this++ not implemented, as it is
         /// ineffecient and usually not needed.
         [[maybe_unused]] auto operator++() noexcept -> EnumerationIterator {
-            ++this->value_;
+            ++this->_value;
             return *this;
         }
 
@@ -88,14 +89,14 @@ namespace etl {
         /// @details Gets an instance to the current underlying value
         /// after casting it the type EnumIterable.
         [[nodiscard]] auto operator*() noexcept -> EnumIterable {
-            return static_cast<EnumIterable>(value_);
+            return static_cast<EnumIterable>(_value);
         }
 
 
         /// @brief Is equal overload
         [[nodiscard]] auto
         operator==(EnumerationIterator const &other_iterator) const noexcept -> bool {
-            return value_ == other_iterator.value_;
+            return _value == other_iterator._value;
         }
 
 
@@ -132,7 +133,7 @@ namespace etl {
     template<typename Tag, typename FundamentalType>
     class TaggedFundamental {
     private:
-        FundamentalType value_{};
+        FundamentalType _value{};
 
     public:
         /// @brief All the constructors needed to build a fundamental wrapped type
@@ -141,12 +142,12 @@ namespace etl {
         };
 
 
-        explicit TaggedFundamental(FundamentalType const &value) : value_(value) {
+        explicit TaggedFundamental(FundamentalType const &value) : _value(value) {
             static_assert(std::is_fundamental<FundamentalType>::value);
         }
 
 
-        explicit TaggedFundamental(FundamentalType &&value) : value_(value) {
+        explicit TaggedFundamental(FundamentalType &&value) : _value(value) {
             static_assert(std::is_fundamental<FundamentalType>::value);
         }
 
@@ -160,11 +161,11 @@ namespace etl {
 
     public:
         /// @brief Get the underlying type as a const ref
-        [[nodiscard]] inline auto get() const noexcept -> FundamentalType const & { return value_; }
+        [[nodiscard]] inline auto get() const noexcept -> FundamentalType const & { return _value; }
 
 
         /// @brief Get the underlying type as immutable
-        [[nodiscard]] inline auto getReadOnly() const noexcept -> FundamentalType { return value_; }
+        [[nodiscard]] inline auto getReadOnly() const noexcept -> FundamentalType { return _value; }
     };
 
 
@@ -174,9 +175,9 @@ namespace etl {
     /// macro invocation.
     class SourceCodeLocation {
     private:
-        std::string file_{};
-        uint32_t line_{};
-        std::string func_{};
+        std::string _file{};
+        uint32_t _line{};
+        std::string _func{};
 
     public:
         SourceCodeLocation() = delete;
@@ -188,7 +189,7 @@ namespace etl {
         /// @param `func` name of the function where the error occurred
         SourceCodeLocation(std::string_view const &file, uint32_t line,
                            std::string_view const &func) noexcept
-            : file_(file), line_(line), func_(func) {}
+            : _file(file), _line(line), _func(func) {}
 
 
         /// @brief Default Destructor, Move/Copy constructor and assignment
@@ -201,18 +202,18 @@ namespace etl {
     public:
         /// @brief Get the file name in which the error occured
         [[nodiscard]] inline auto file() const noexcept -> std::string_view {
-            return file_;
+            return _file;
         }
 
 
         /// @brief Get the line number in which the error occured
         [[nodiscard]] inline auto line() const noexcept -> uint32_t {
-            return line_;
+            return _line;
         }
 
         /// @brief Get the name of the function in which the error occured
         [[nodiscard]] inline auto function() const noexcept -> std::string_view {
-            return func_;
+            return _func;
         }
     };
 
@@ -250,14 +251,14 @@ namespace etl {
     /// SourceCodeLocation RUNTIME_INFO macro.
     class Error : public IError {
     private:
-        std::string msg_{};
-        std::string info_{};
+        std::string _msg{};
+        std::string _info{};
 
     private:
         /// @brief Constructs the error with only a message
         ///
         /// @details This constructor is private to prevent the user from circumventing the create() method
-        explicit Error(std::string_view const &msg) noexcept : msg_(msg) {}
+        explicit Error(std::string_view const &msg) noexcept : _msg(msg) {}
 
 
         /// @brief Constructs the error with the message and source location
@@ -267,8 +268,8 @@ namespace etl {
         ///
         /// @param `msg` the error message
         /// @param `slc` the source code location object
-        Error(std::string_view const &msg, SourceCodeLocation &&slc) noexcept : msg_(msg) {
-            info_.append("Error: ")
+        Error(std::string_view const &msg, SourceCodeLocation &&slc) noexcept : _msg(msg) {
+            _info.append("Error: ")
                     .append(msg)
                     .append("\nFunction: ")
                     .append(slc.function())
@@ -304,19 +305,19 @@ namespace etl {
     public:
         /// @brief Get just the error message
         [[nodiscard]] inline auto msg() const noexcept -> std::string override {
-            return msg_;
+            return _msg;
         }
 
 
         /// @brief Override the current error message, useful when using the Result.mapErr method.
         [[nodiscard]] inline auto set(std::string_view &&msg) noexcept {
-            msg_ = msg;
+            _msg = msg;
         }
 
 
         /// @brief Override the current error message, useful when using the Result.mapErr method.
         [[nodiscard]] inline auto set(std::string_view const &msg) noexcept {
-            msg_ = msg;
+            _msg = msg;
         }
 
 
@@ -325,10 +326,10 @@ namespace etl {
         /// @details  If Error was not created with the RUNTIME_INFO macro info_ will be empty,
         /// in which case the msg_ will be returned instead.
         [[nodiscard]] inline auto info() const noexcept -> std::string override {
-            if (!info_.empty()) {
-                return info_;
+            if (!_info.empty()) {
+                return _info;
             }
-            return msg_;
+            return _msg;
         }
     };
 
@@ -345,15 +346,16 @@ namespace etl {
     template<typename OkType, typename ErrType>
     class Result {
     private:
-        std::variant<OkType, ErrType> result_;
-        bool isOk_;
+        std::variant<OkType, ErrType> _result;
+        bool _isOk{false};
 
     public:
         /// @brief All the constructors needed to build an OkType or ErrType
-        explicit Result(OkType const &value) : result_(value), isOk_(true) {}
-        explicit Result(OkType &&value) : result_(std::move(value)), isOk_(true) {}
-        explicit Result(ErrType const &error) : result_(error), isOk_(false) {}
-        explicit Result(ErrType &&error) : result_(std::move(error)), isOk_(false) {}
+        Result() noexcept = default;
+        explicit Result(OkType const &value) noexcept : _result(value), _isOk(true) {}
+        explicit Result(OkType &&value) noexcept : _result(std::move(value)), _isOk(true) {}
+        explicit Result(ErrType const &error) noexcept : _result(error) {}
+        explicit Result(ErrType &&error) noexcept : _result(std::move(error)) {}
 
 
         /// @brief Default Destructor, Move/Copy constructor and assignment
@@ -366,13 +368,13 @@ namespace etl {
     public:
         /// @brief Check if the variant is of the [OkType]
         [[nodiscard]] inline auto isOk() const noexcept -> bool {
-            return isOk_;
+            return _isOk;
         }
 
 
         /// @brief Check if the variant is of the [ErrType]
         [[nodiscard]] inline auto isErr() const noexcept -> bool {
-            return !isOk_;
+            return !_isOk;
         }
 
 
@@ -383,8 +385,8 @@ namespace etl {
         /// @return std::optinal<OkType> for safety, incase the user did not call
         /// isOk() before using this method.
         [[nodiscard]] inline auto ok() const noexcept -> std::optional<OkType> {
-            if (isOk_) {
-                if (auto *value = std::get_if<OkType>(&result_)) {
+            if (_isOk) {
+                if (auto *value = std::get_if<OkType>(&_result)) {
                     return *value;
                 }
             }
@@ -399,8 +401,8 @@ namespace etl {
         /// @return std::optinal<ErrType> for safety, incase the user did not call
         /// isErr() before using this method.
         [[nodiscard]] inline auto err() const noexcept -> std::optional<ErrType> {
-            if (!isOk_) {
-                if (auto *err = std::get_if<ErrType>(&result_)) {
+            if (!_isOk) {
+                if (auto *err = std::get_if<ErrType>(&_result)) {
                     return *err;
                 }
             }
@@ -416,14 +418,14 @@ namespace etl {
         /// if isOK() is false.
         template<typename Function>
         [[nodiscard]] inline auto map(Function &&func) const noexcept -> Result<OkType, ErrType> {
-            if (isOk_) {
+            if (_isOk) {
                 if constexpr (std::is_invocable_r_v<OkType, Function, OkType const &>) {
-                    return Result<OkType, ErrType>(std::invoke(std::forward<Function>(func), *std::get_if<OkType>(&result_)));
+                    return Result<OkType, ErrType>(std::invoke(std::forward<Function>(func), *std::get_if<OkType>(&_result)));
                 } else {
-                    return Result<OkType, ErrType>(*std::get_if<OkType>(&result_));
+                    return Result<OkType, ErrType>(*std::get_if<OkType>(&_result));
                 }
             }
-            return Result<OkType, ErrType>(std::move(*std::get_if<ErrType>(&result_)));
+            return Result<OkType, ErrType>(std::move(*std::get_if<ErrType>(&_result)));
         }
 
 
@@ -435,14 +437,14 @@ namespace etl {
         /// if isErr() is false.
         template<typename Function>
         [[nodiscard]] inline auto mapErr(Function &&func) const noexcept -> Result<OkType, ErrType> {
-            if (!isOk_) {
+            if (!_isOk) {
                 if constexpr (std::is_invocable_r_v<ErrType, Function, ErrType const &>) {
-                    return Result<OkType, ErrType>(std::invoke(std::forward<Function>(func), *std::get_if<ErrType>(&result_)));
+                    return Result<OkType, ErrType>(std::invoke(std::forward<Function>(func), *std::get_if<ErrType>(&_result)));
                 } else {
-                    return Result<OkType, ErrType>(*std::get_if<ErrType>(&result_));
+                    return Result<OkType, ErrType>(*std::get_if<ErrType>(&_result));
                 }
             }
-            return Result<OkType, ErrType>(std::move(*std::get_if<OkType>(&result_)));
+            return Result<OkType, ErrType>(std::move(*std::get_if<OkType>(&_result)));
         }
     };
 
@@ -456,25 +458,26 @@ namespace etl {
     template<typename OkType, typename ErrType>
     class Result<std::unique_ptr<OkType>, ErrType> {
     private:
-        std::variant<std::unique_ptr<OkType>, ErrType> result_;
-        bool isOk_;
+        std::variant<std::unique_ptr<OkType>, ErrType> _result;
+        bool _isOk{false};
 
     public:
         /// @brief All the constructors needed to build an OkType or ErrType for a move only type
-        explicit Result(std::unique_ptr<OkType> &&value) : result_(std::move(value)), isOk_(true) {}
-        explicit Result(const ErrType &error) : result_(error), isOk_(false) {}
-        explicit Result(ErrType &&error) : result_(std::move(error)), isOk_(false) {}
+        Result() noexcept = default;
+        explicit Result(std::unique_ptr<OkType> &&value) noexcept : _result(std::move(value)), _isOk(true) {}
+        explicit Result(ErrType const &error) noexcept : _result(error) {}
+        explicit Result(ErrType &&error) noexcept : _result(std::move(error)) {}
 
     public:
         /// @brief Check if the variant value is of the [OkType]
         [[nodiscard]] inline auto isOk() const noexcept -> bool {
-            return isOk_;
+            return _isOk;
         }
 
 
         /// @brief Check if the variant value is of the [ErrType]
         [[nodiscard]] inline auto isErr() const noexcept -> bool {
-            return !isOk_;
+            return !_isOk;
         }
 
 
@@ -485,8 +488,8 @@ namespace etl {
         /// @return std::optinal<OkType> for safety, incase the user did not call
         /// isOk() before using this method.
         [[nodiscard]] inline auto ok() const noexcept -> std::optional<std::unique_ptr<OkType>> {
-            if (isOk_) {
-                if (auto *value = std::get_if<std::unique_ptr<OkType>>(&result_)) {
+            if (_isOk) {
+                if (auto *value = std::get_if<std::unique_ptr<OkType>>(&_result)) {
                     return std::make_unique<OkType>(**value);
                 }
             }
@@ -501,8 +504,8 @@ namespace etl {
         /// @return std::optinal<ErrType> for safety, incase the user did not call
         /// isErr() before using this method.
         [[nodiscard]] inline auto err() const noexcept -> std::optional<ErrType> {
-            if (!isOk_) {
-                if (auto *err = std::get_if<ErrType>(&result_)) {
+            if (!_isOk) {
+                if (auto *err = std::get_if<ErrType>(&_result)) {
                     return *err;
                 }
             }
