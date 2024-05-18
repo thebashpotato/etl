@@ -4,7 +4,7 @@ include(GoogleTest)
 # NOTE: Add all test source files
 #
 set(APP_TEST_SOURCES "${APP_TEST_SOURCE_DIR}/enum_iterable_test.cpp" "${APP_TEST_SOURCE_DIR}/result_test.cpp"
-                     "${APP_TEST_SOURCE_DIR}/tagged_type_test.cpp")
+                     "${APP_TEST_SOURCE_DIR}/tagged_type_test.cpp" "${APP_TEST_SOURCE_DIR}/version_test.cpp")
 
 #
 # NOTE: Declare a custom name for the test executable

@@ -24,7 +24,7 @@
 
 Etl contains classes that rely on C++ >= 17 to solve common programming problems that the language does not technically have
 built in support for. This library has **zero** external dependencies and was born out of my frustration at work and personal projects, as I constantly had to come up with
-custom solutions to fix the common problems I ran into, I finally put them all together in this MIT licensed single header templated library.
+custom solutions to fix the common problems I ran into, I finally put them all together in this BSD-Clause-3 licensed single header templated library.
 Hopefully they solve some of your problems, and speed up your development.
 
 ### What does this library contain?
@@ -98,7 +98,7 @@ make uninstall
 ### Find Package
 
 ```cmake
-find_package(etl 0.5.0 REQUIRED)
+find_package(etl 0.7.0 REQUIRED)
 
 # Your Application linking cmake code
 target_link_libraries(
@@ -117,7 +117,7 @@ cpmaddpackage(
   GITHUB_REPOSITORY
   thebashpotato/extra-template-library
   VERSION
-  0.5.0)
+  0.7.0)
 
 if(etl_ADDED)
   message(STATUS "Extra Template Library added")
@@ -175,4 +175,4 @@ Small note: If editing the README, please conform to the [standard-readme](https
 
 ## License
 
-MIT © 2023 Matt Williams
+BSD-Clause-3 © 2024 Matt Williams

@@ -1,88 +1,121 @@
 #include "blackjack.hpp"
+#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <cstdlib>
+#include <etl.hpp>
+#include <iostream>
+#include <memory>
+#include <random>
+#include <utility>
 
-namespace blackjack {
+namespace blackjack
+{
 
-    Card::Card(Rank rank, Suit suit) noexcept : _rank(rank), _suit(suit) {}
+Card::Card(Rank rank, Suit suit) noexcept : _rank(rank), _suit(suit)
+{
+}
 
-    auto Card::getRank() const noexcept -> Rank { return _rank; }
+auto Card::getRank() const noexcept -> Rank
+{
+    return _rank;
+}
 
-    auto Card::getSuite() const noexcept -> Suit { return _suit; }
+auto Card::getSuite() const noexcept -> Suit
+{
+    return _suit;
+}
 
-
-    Deck::Deck() noexcept {
-        for (auto const &suit: SuitIterator()) {
-            for (auto const &rank: RankIterator()) {
-                _cards.emplace_back(std::make_unique<Card>(rank, suit));
-            }
+Deck::Deck() noexcept
+{
+    for (auto const &suit : SuitIterator())
+    {
+        for (auto const &rank : RankIterator())
+        {
+            _cards.emplace_back(std::make_unique<Card>(rank, suit));
         }
     }
+}
 
+auto Deck::size() -> std::size_t
+{
+    return _cards.size();
+}
 
-    auto Deck::size() -> std::size_t { return _cards.size(); }
+auto Deck::shuffleDeck() -> void
+{
+    std::random_device random_number;
+    std::mt19937 generator(random_number());
+    std::shuffle(_cards.begin(), _cards.end(), generator);
+}
 
-
-    auto Deck::shuffleDeck() -> void {
-        std::random_device random_number;
-        std::mt19937 generator(random_number());
-        std::shuffle(_cards.begin(), _cards.end(), generator);
+auto Deck::drawCard() -> Result<UniqueCard, Error>
+{
+    if (_cards.empty())
+    {
+        return Result<UniqueCard, Error>(Error::create("Deck is empty", RUNTIME_INFO));
     }
+    auto card = std::move(_cards.back());
+    _cards.pop_back();
+    return Result<UniqueCard, Error>(std::move(card));
+}
 
+auto Player::addCard(Deck::UniqueCard &&card) noexcept
+{
+    _hand.emplace_back(std::move(card));
+}
 
-    auto Deck::drawCard() -> Result<UniqueCard, Error> {
-        if (_cards.empty()) {
-            return Result<UniqueCard, Error>(Error::create("Deck is empty", RUNTIME_INFO));
+auto Player::getHandValue() -> uint16_t
+{
+    constexpr auto best_hand_value = 21;
+    constexpr auto remove_value = 10;
+    constexpr auto hightest_ace_value = 11;
+
+    uint16_t value = 0;
+    uint16_t aces = 0;
+
+    for (const auto &card : this->_hand)
+    {
+        auto cardValue = card->getRank();
+        if (cardValue >= Rank::TEN)
+        {
+            cardValue = Rank::TEN;
         }
-        auto card = std::move(_cards.back());
-        _cards.pop_back();
-        return Result<UniqueCard, Error>(std::move(card));
-    }
-
-
-    auto Player::addCard(Deck::UniqueCard &&card) noexcept {
-        _hand.emplace_back(std::move(card));
-    }
-
-
-    auto Player::getHandValue() -> uint16_t {
-        constexpr auto best_hand_value = 21;
-        constexpr auto remove_value = 10;
-        constexpr auto hightest_ace_value = 11;
-
-        uint16_t value = 0;
-        uint16_t aces = 0;
-
-        for (const auto &card: this->_hand) {
-            auto cardValue = card->getRank();
-            if (cardValue >= Rank::TEN) {
-                cardValue = Rank::TEN;
-            } else if (cardValue == Rank::ACE) {
-                aces++;
-                cardValue = static_cast<Rank>(hightest_ace_value);
-            }
-            value += static_cast<uint16_t>(cardValue);
+        else if (cardValue == Rank::ACE)
+        {
+            aces++;
+            cardValue = static_cast<Rank>(hightest_ace_value);
         }
-
-        while (value > best_hand_value && aces > 0) {
-            value -= remove_value;
-            aces--;
-        }
-        return value;
+        value += static_cast<uint16_t>(cardValue);
     }
 
-}// namespace blackjack
+    while (value > best_hand_value && aces > 0)
+    {
+        value -= remove_value;
+        aces--;
+    }
+    return value;
+}
 
+} // namespace blackjack
 
-auto draw_two_cards(blackjack::Deck &deck, blackjack::Player &entity) {
-    for (int i = 0; i < 2; ++i) {
-        if (auto result = deck.drawCard(); result.isOk()) {
+auto draw_two_cards(blackjack::Deck &deck, blackjack::Player &entity)
+{
+    for (int i = 0; i < 2; ++i)
+    {
+        if (auto result = deck.drawCard(); result.is_ok())
+        {
             entity.addCard(std::move(result.ok().value()));
-        } else {
+        }
+        else
+        {
             std::cerr << result.err().value().info() << '\n';
         }
     }
 }
 
-auto main() -> int {
+auto main() -> int
+{
     blackjack::Deck deck;
     deck.shuffleDeck();
 
