@@ -1,5 +1,3 @@
-/// BSD-Clause-3
-///
 /// Copyright (c) 2024, Matt Williams
 /// All rights reserved.
 ///
