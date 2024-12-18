@@ -32,7 +32,7 @@ Hopefully they solve some of your problems, and speed up your development.
 Please checkout the unit-tests and example code for use cases and implementations, also don't be afraid to read the source code,
 its a single header file, at roughly 798 lines of code. A nice and easy read with descriptive comments.
 
-1. [etl::Result<T, E>](https://github.com/thebashpotato/etl/blob/main/etl/tests/result_test.cpp)
+1. [etl::Result<T, E>](https://github.com/thebashpotato/etl/blob/2510c16bfcf22b4730ace5f7337c6d51adbc53a0/etl/include/etl.hpp#L586)
 
 - Don't like or don't want to use C++'s exception handling paradigm for errors? Cool, then you don't have to, 
   the `etl::Result<T, E>` attempts to be as close to the Rust langauges implementation as possible,
@@ -101,8 +101,7 @@ auto main() -> int
 
 - One current catch with the `etl::Result<T, E>` type is if you have a **move only type** you will need to "hi-jack" the etl namespace
   and create a template specialization for `Result<YourMoveOnlyType, E>`, but don't worry it's easy. 
-  I have provided an example [here](https://github.com/thebashpotato/etl/blob/main/etl/examples/moveonly) which you can copy and paste,
-  (Just replace the name of the the namespaced class with your own).
+  I have provided an example [here](https://github.com/thebashpotato/etl/blob/2510c16bfcf22b4730ace5f7337c6d51adbc53a0/etl/examples/moveonly/moveonly.hpp#L12) which you can copy and paste, (Just replace the name of the the namespaced class with your own).
 
 2. [etl::EnumerationIterator<IteratorName, IteratorBegin, IteratorEnd>](https://github.com/thebashpotato/etl/blob/main/etl/tests/enum_iterable_test.cpp)
 
@@ -119,7 +118,7 @@ auto main() -> int
 
 - The TaggedFundamentalType supports all arithmetic, boolean and bitwise operator overloads.
 
-4. [etl::BaseError](https://github.com/thebashpotato/etl/blob/f1dcd42141c26f4826283d84ec39f87d364be621/etl/include/etl.hpp#L251)
+4. [etl::BaseError](https://github.com/thebashpotato/etl/blob/2510c16bfcf22b4730ace5f7337c6d51adbc53a0/etl/include/etl.hpp#L512)
 
 - An Abstract error class that supports source code location in yours errors, using the function, line and file macros.
   You can easily override all the methods, but will likely be uneeded. Just define two constructors and you're on your way.
@@ -162,9 +161,8 @@ auto main() -> int
 
 
 - A basic error class that supports source code location in your errors, using the function, line, and file macros.
-  This makes it much easier to provide usefull runtime error information as it captures the above information through use of a custom
-  [SourceCodeLocation](https://github.com/thebashpotato/etl/blob/f1dcd42141c26f4826283d84ec39f87d364be621/etl/include/etl.hpp#L224) macro which the Error class supports, and can easily be returned in the afore-mentioned `Result<T, E>` object for more Rust like
-  behaviour.
+  This makes it much easier to provide usefull runtime error information as it captures the above information through use of a custom source code location macro called
+  [etl::RUNTIME_INFO](https://github.com/thebashpotato/etl/blob/2510c16bfcf22b4730ace5f7337c6d51adbc53a0/etl/include/etl.hpp#L502) macro which the BaseError class supports.
 
 - `etl::DynError` a type definition which is just a `std::shared_ptr<BaseError>` to support returning polymorphic errors up a function call chain with less typing.
    ```cpp
@@ -175,7 +173,7 @@ auto main() -> int
 ## Integration
 
 
-[Copy the single header file](etl/etl/include/etl.hpp) into your project.
+[Copy the single header file](etl/include/etl.hpp) into your project.
 
 Or you can download the `etl.hpp` file from the latest [Releases](https://github.com/thebashpotato/etl/releases)
 
@@ -264,11 +262,11 @@ pkg-config etl --cflags
 
 ## Usage
 
-1. [Please see the unit tests](etl/etl/tests) for bite size examples for each class.
+1. [Please see the unit tests](etl/tests) for bite size examples for each class.
 
-2. [Please see](etl/etl/examples/blackjack) for an example blackjack program utilizing etl to solve real world problems.
+2. [Please see](etl/examples/blackjack) for an example blackjack program utilizing etl to solve real world problems.
 
-3. [Please see](etl/etl/examples/moveonly) for an example for a Result<T, E> move only class template specialization.
+3. [Please see](etl/examples/moveonly) for an example for a Result<T, E> move only class template specialization.
 
 ```cpp
 #include <etl.hpp>
