@@ -2,10 +2,10 @@
   <img width="500" height="500" src="logo.png">
 </div>
 <div align="center">
-  <img alt="GitHub Workflow Status (with event)" src="https://img.shields.io/github/actions/workflow/status/thebashpotato/extra-template-library/cmake.yml?style=flat-square&logo=ubuntu&label=Build%20Status">
+  <img alt="GitHub Workflow Status (with event)" src="https://img.shields.io/github/actions/workflow/status/thebashpotato/etl/cmake.yml?style=flat-square&logo=ubuntu&label=Build%20Status">
   <img src="https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square">
-  <img alt="GitHub Release Date - Published_At" src="https://img.shields.io/github/release-date/thebashpotato/extra-template-library?style=flat-square">
-  <img alt="GitHub" src="https://img.shields.io/github/license/thebashpotato/extra-template-library?style=flat-square">
+  <img alt="GitHub Release Date - Published_At" src="https://img.shields.io/github/release-date/thebashpotato/etl?style=flat-square">
+  <img alt="GitHub" src="https://img.shields.io/github/license/thebashpotato/etl?style=flat-square">
   <img alt="Github" src="https://img.shields.io/badge/C++-17, 20, 23-blue.svg?style=flat-square&logo=c%2B%2B">
   <br>
   <p><b>Extra Templated Library</b> for modern C++ development</p>
@@ -32,7 +32,7 @@ Hopefully they solve some of your problems, and speed up your development.
 Please checkout the unit-tests and example code for use cases and implementations, also don't be afraid to read the source code,
 its a single header file, at roughly 798 lines of code. A nice and easy read with descriptive comments.
 
-1. [etl::Result<T, E>](https://github.com/thebashpotato/extra-template-library/blob/main/etl/tests/result_test.cpp)
+1. [etl::Result<T, E>](https://github.com/thebashpotato/etl/blob/main/etl/tests/result_test.cpp)
 
 - Don't like or don't want to use C++'s exception handling paradigm for errors? Cool, then you don't have to, 
   the `etl::Result<T, E>` attempts to be as close to the Rust langauges implementation as possible,
@@ -101,16 +101,16 @@ auto main() -> int
 
 - One current catch with the `etl::Result<T, E>` type is if you have a **move only type** you will need to "hi-jack" the etl namespace
   and create a template specialization for `Result<YourMoveOnlyType, E>`, but don't worry it's easy. 
-  I have provided an example [here](https://github.com/thebashpotato/extra-template-library/blob/main/etl/examples/moveonly) which you can copy and paste,
+  I have provided an example [here](https://github.com/thebashpotato/etl/blob/main/etl/examples/moveonly) which you can copy and paste,
   (Just replace the name of the the namespaced class with your own).
 
-2. [etl::EnumerationIterator<IteratorName, IteratorBegin, IteratorEnd>](https://github.com/thebashpotato/extra-template-library/blob/main/etl/tests/enum_iterable_test.cpp)
+2. [etl::EnumerationIterator<IteratorName, IteratorBegin, IteratorEnd>](https://github.com/thebashpotato/etl/blob/main/etl/tests/enum_iterable_test.cpp)
 
 - Want to use modern C++'s ranged for loops to iterate over an enum safely? There is a templated class for that.
 
 - Be aware that your enum **MUST** be contiguous otherwise`EnumerationIterator` won't work.
 
-3. [etl::TaggedFundamentalType<Tag, FundamentalType>](https://github.com/thebashpotato/extra-template-library/blob/main/etl/tests/tagged_type_test.cpp)
+3. [etl::TaggedFundamentalType<Tag, FundamentalType>](https://github.com/thebashpotato/etl/blob/main/etl/tests/tagged_type_test.cpp)
 
 - Do you have many parameters to a function or constructor of the same type contiguously
   (common when representing geometrical objects such as a Rectangle)? This can result in programmer error by
@@ -119,7 +119,7 @@ auto main() -> int
 
 - The TaggedFundamentalType supports all arithmetic, boolean and bitwise operator overloads.
 
-4. [etl::BaseError](https://github.com/thebashpotato/extra-template-library/blob/f1dcd42141c26f4826283d84ec39f87d364be621/etl/include/etl.hpp#L251)
+4. [etl::BaseError](https://github.com/thebashpotato/etl/blob/f1dcd42141c26f4826283d84ec39f87d364be621/etl/include/etl.hpp#L251)
 
 - An Abstract error class that supports source code location in yours errors, using the function, line and file macros.
   You can easily override all the methods, but will likely be uneeded. Just define two constructors and you're on your way.
@@ -163,7 +163,7 @@ auto main() -> int
 
 - A basic error class that supports source code location in your errors, using the function, line, and file macros.
   This makes it much easier to provide usefull runtime error information as it captures the above information through use of a custom
-  [SourceCodeLocation](https://github.com/thebashpotato/extra-template-library/blob/f1dcd42141c26f4826283d84ec39f87d364be621/etl/include/etl.hpp#L224) macro which the Error class supports, and can easily be returned in the afore-mentioned `Result<T, E>` object for more Rust like
+  [SourceCodeLocation](https://github.com/thebashpotato/etl/blob/f1dcd42141c26f4826283d84ec39f87d364be621/etl/include/etl.hpp#L224) macro which the Error class supports, and can easily be returned in the afore-mentioned `Result<T, E>` object for more Rust like
   behaviour.
 
 - `etl::DynError` a type definition which is just a `std::shared_ptr<BaseError>` to support returning polymorphic errors up a function call chain with less typing.
@@ -175,9 +175,9 @@ auto main() -> int
 ## Integration
 
 
-[Copy the single header file](extra-template-library/etl/include/etl.hpp) into your project.
+[Copy the single header file](etl/etl/include/etl.hpp) into your project.
 
-Or you can download the `etl.hpp` file from the latest [Releases](https://github.com/thebashpotato/extra-template-library/releases)
+Or you can download the `etl.hpp` file from the latest [Releases](https://github.com/thebashpotato/etl/releases)
 
 ### Install globally on your system (assuming you're on Linux or a BSD)
 
@@ -224,7 +224,7 @@ cpmaddpackage(
   NAME
   etl
   GITHUB_REPOSITORY
-  thebashpotato/extra-template-library
+  thebashpotato/etl
   VERSION
   0.8.0)
 
@@ -264,9 +264,11 @@ pkg-config etl --cflags
 
 ## Usage
 
-[Please see the unit tests](extra-template-library/etl/tests) for bite size examples for each class.
-[Please see](extra-template-library/etl/examples/blackjack) for an example blackjack program utilizing etl to solve real world problems.
-[Please see](extra-template-library/etl/examples/moveonly) for an example for a Result<T, E> move only class template specialization.
+1. [Please see the unit tests](etl/etl/tests) for bite size examples for each class.
+
+2. [Please see](etl/etl/examples/blackjack) for an example blackjack program utilizing etl to solve real world problems.
+
+3. [Please see](etl/etl/examples/moveonly) for an example for a Result<T, E> move only class template specialization.
 
 ```cpp
 #include <etl.hpp>
