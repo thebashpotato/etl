@@ -19,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Switch to using the optional's emplace method in Result.ok() and err() methods
   to improve return value optimization.
 
+- SourceCodeLocation class is now in an internal `etl::detail` namespace. A user of the library is not
+  meant to use it directly.
+
 - Changed class member variable naming convention
 
 - Changed east const usage to standard west const

@@ -3,11 +3,9 @@
 #include <gtest/gtest.h>
 #include <utility>
 
-using namespace etl;
-
 /// @brief Tagged type identifiers for a width and height.
 /// Should not be used directly.
-namespace detail
+namespace tags
 {
 
 class WidthTag
@@ -22,11 +20,11 @@ class ValueTag
 {
 };
 
-} // namespace detail
+} // namespace tags
 
-using Width = TaggedFundamental<detail::WidthTag, uint32_t>;
-using Height = TaggedFundamental<detail::HeightTag, uint32_t>;
-using Value = TaggedFundamental<detail::ValueTag, int32_t>;
+using Width = etl::TaggedFundamental<tags::WidthTag, uint32_t>;
+using Height = etl::TaggedFundamental<tags::HeightTag, uint32_t>;
+using Value = etl::TaggedFundamental<tags::ValueTag, int32_t>;
 
 class Rect
 {

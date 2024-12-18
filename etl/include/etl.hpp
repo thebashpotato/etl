@@ -444,6 +444,11 @@ template <typename Tag, typename FundamentalType> class TaggedFundamental
     }
 };
 
+/// @brief User of etl should not use anything in the detail namespace, SourceCodeLocation location type only has to be 
+/// used in one of the constructors of an error class which implements etl::BaseError
+namespace detail 
+{
+
 /// @brief Holds useful runtime source code location information for use in Errors.
 ///
 /// @details Should not be used directly, rather the user should pass the `etl::RUNTIME_INFO`
@@ -495,13 +500,15 @@ class SourceCodeLocation
     std::string m_func;
 };
 
+} // namespace detail
+
 /// @brief Wrapper macro which constructs an instance of SourceCodeLocation in-place
 /// and guarantees that the accurate file, function name, and line number will be
 /// reported.
 #ifdef __linux__
-#define RUNTIME_INFO SourceCodeLocation(__FILE__, __LINE__, static_cast<const char *>(__PRETTY_FUNCTION__))
+#define RUNTIME_INFO detail::SourceCodeLocation(__FILE__, __LINE__, static_cast<const char *>(__PRETTY_FUNCTION__))
 #else
-#define RUNTIME_INFO SourceCodeLocation(__FILE__, __LINE__, static_cast<const char *>(__func__))
+#define RUNTIME_INFO detail::SourceCodeLocation(__FILE__, __LINE__, static_cast<const char *>(__func__))
 #endif
 
 /// @brief Base Abstract Error for use with the Result and DynError types.
@@ -524,7 +531,7 @@ class BaseError
     ///
     /// @param `msg` the error message
     /// @param `slc` the source code location object
-    BaseError(const std::string_view &msg, const SourceCodeLocation &slc) noexcept : m_msg(msg)
+    BaseError(const std::string_view &msg, const detail::SourceCodeLocation &slc) noexcept : m_msg(msg)
     {
         m_info.append("Error: ")
             .append(msg)

@@ -29,7 +29,7 @@ class Error : public etl::BaseError
     {
     }
 
-    Error(const std::string_view &msg, const etl::SourceCodeLocation &slc) noexcept : etl::BaseError(msg, slc)
+    Error(const std::string_view &msg, const etl::detail::SourceCodeLocation &slc) noexcept : etl::BaseError(msg, slc)
     {
     }
 };
