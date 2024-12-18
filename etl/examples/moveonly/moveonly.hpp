@@ -3,7 +3,7 @@
 #include <etl.hpp>
 #include <utility>
 
-namespace example
+namespace Example
 {
 
 /// @brief Move only object
@@ -11,21 +11,17 @@ namespace example
 /// @details This showcases how to make a Result<T, E> template specialization for a move only type.
 class MoveOnlyType
 {
-  private:
-    // Private member variables
-    int _value{};
-
   public:
     // Ctor/Dtor
     MoveOnlyType() noexcept = default;
-    explicit MoveOnlyType(int value) noexcept : _value(value)
+    explicit MoveOnlyType(int value) noexcept : m_value(value)
     {
     }
-    virtual ~MoveOnlyType() = default;
+    ~MoveOnlyType() = default;
 
     // Copy constructor and assignment operator delete
-    MoveOnlyType(MoveOnlyType const &other) = delete;
-    auto operator=(MoveOnlyType const &other) -> MoveOnlyType & = delete;
+    MoveOnlyType(const MoveOnlyType &other) = delete;
+    auto operator=(const MoveOnlyType &other) -> MoveOnlyType & = delete;
 
     // Move constructor and assignment operator
     MoveOnlyType(MoveOnlyType &&other) = default;
@@ -35,82 +31,89 @@ class MoveOnlyType
     // Public member functions
     [[nodiscard]] auto value() const noexcept -> int
     {
-        return _value;
+        return m_value;
     }
+
+  private:
+    // Private member variables
+    int m_value{};
 };
-} // namespace example
+
+} // namespace Example
 
 /// @brief Hi-jack the etl namespace to add a custom template specialization for example::MoveOnlyType
 namespace etl
 {
 
-template <typename ErrType> class Result<example::MoveOnlyType, ErrType>
+template <typename ErrType> class Result<Example::MoveOnlyType, ErrType>
 {
-  private:
-    std::variant<example::MoveOnlyType, ErrType> _result;
-    bool _is_ok{};
-
   public:
     Result() noexcept = default;
-    explicit Result(example::MoveOnlyType &&value) noexcept : _result(std::move(value)), _is_ok(true)
+    explicit Result(Example::MoveOnlyType &&value) noexcept : m_result(std::move(value)), m_is_ok(true)
     {
     }
-    explicit Result(const ErrType &error) noexcept : _result(error)
+
+    explicit Result(const ErrType &error) noexcept : m_result(error)
     {
     }
-    explicit Result(ErrType &&error) noexcept : _result(std::move(error))
+
+    explicit Result(ErrType &&error) noexcept : m_result(std::move(error))
     {
     }
 
   public:
     /// @brief Check if the union value is of the ok type
-    [[nodiscard]] inline auto is_ok() const noexcept -> bool
+    [[nodiscard]] auto is_ok() const noexcept -> bool
     {
-        return _is_ok;
+        return m_is_ok;
     }
 
     /// @brief Check if the union value is of the error type
-    [[nodiscard]] inline auto is_err() const noexcept -> bool
+    [[nodiscard]] auto is_err() const noexcept -> bool
     {
-        return !_is_ok;
+        return !m_is_ok;
     }
 
-    /// @brief Check if the union value is of the error type
+    /// @brief Gets the [OkType] value from the variant
     ///
-    /// @details The use should always use isOk() before using ok()
+    /// @details The user should always use the is_ok() method before using ok()
     ///
-    /// @return std::optinal<example::MoveOnlyType> for safety, incase the user did not call
-    /// isOk() before using this method.
-    [[nodiscard]] inline auto ok() noexcept -> std::optional<example::MoveOnlyType>
+    /// @return std::optional<Example::MoveOnlyType> for safety, incase the user did not call
+    /// is_ok() before using this method.
+    [[nodiscard]] auto ok() noexcept -> std::optional<Example::MoveOnlyType>
     {
-        std::optional<example::MoveOnlyType> opt{std::nullopt};
-        if (_is_ok)
+        std::optional<Example::MoveOnlyType> ret;
+        if (m_is_ok)
         {
-            if (auto *value = std::get_if<example::MoveOnlyType>(&_result))
+            if (auto *value = std::get_if<Example::MoveOnlyType>(&m_result))
             {
-                opt.emplace(std::move(*value));
-                return opt;
+                ret.emplace(std::move(*value));
             }
         }
-        return opt;
+        return ret;
     }
 
-    /// @brief Check if the union value is of the error type
+    /// @brief Get the [ErrType] value from the variant
     ///
-    /// @details The use should always use isErr() before using err()
+    /// @details The user should always use the is_err() method before using err()
     ///
-    /// @return std::optinal<ErrType> for safety, incase the user did not call
-    /// isErr() before using this method.
-    [[nodiscard]] inline auto err() const noexcept -> std::optional<ErrType>
+    /// @return std::optional<ErrType> for safety, incase the user did not call
+    /// is_err() before using this method.
+    [[nodiscard]] auto err() noexcept -> std::optional<ErrType>
     {
-        if (!_is_ok)
+        std::optional<ErrType> ret;
+        if (!m_is_ok)
         {
-            if (auto *err = std::get_if<ErrType>(&_result))
+            if (auto *err = std::get_if<ErrType>(&m_result))
             {
-                return *err;
+                ret.emplace(std::move(*err));
             }
         }
-        return std::nullopt;
+        return ret;
     }
+
+  private:
+    std::variant<Example::MoveOnlyType, ErrType> m_result;
+    bool m_is_ok{};
 };
 } // namespace etl

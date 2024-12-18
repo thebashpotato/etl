@@ -11,53 +11,66 @@
 /// I would share my solution with him and the world (if anyone ever sees this).
 #pragma once
 
+#include <cstdint>
 #include <cstdlib>
 #include <ctime>
 #include <etl.hpp>
 #include <memory>
 #include <vector>
 
-using namespace etl;
+namespace Blackjack
+{
 
-namespace blackjack
+/// @brief Create a basic Error class which inherits from the etl::BaseError
+class Error : public etl::BaseError
 {
-enum class Rank : std::uint16_t
-{
-    ACE = 1,
-    TWO,
-    THREE,
-    FOUR,
-    FIVE,
-    SIX,
-    SEVEN,
-    EIGHT,
-    NINE,
-    TEN,
-    JACK,
-    QUEEN,
-    KING
+  public:
+    explicit Error(const std::string_view &msg) noexcept : etl::BaseError(msg)
+    {
+    }
+
+    Error(const std::string_view &msg, const etl::SourceCodeLocation &slc) noexcept : etl::BaseError(msg, slc)
+    {
+    }
 };
 
-enum class Suit : std::uint16_t
+enum class Rank : std::uint8_t
 {
-    HEARTS,
-    DIAMONDS,
-    CLUBS,
-    SPADES,
+    Ace,
+    Two,
+    Three,
+    Four,
+    Five,
+    Six,
+    Seven,
+    Eight,
+    Nine,
+    Ten,
+    Jack,
+    Queen,
+    King
+};
+
+enum class Suit : std::uint8_t
+{
+    Hearts,
+    Diamonds,
+    Clubs,
+    Spades,
 };
 
 class Card
 {
-  private:
-    Rank _rank;
-    Suit _suit;
-
   public:
     Card(Rank rank, Suit suit) noexcept;
 
-    [[nodiscard]] auto getRank() const noexcept -> Rank;
+    [[nodiscard]] auto rank() const noexcept -> Rank;
 
-    [[nodiscard]] auto getSuite() const noexcept -> Suit;
+    [[nodiscard]] auto suit() const noexcept -> Suit;
+
+  private:
+    Rank m_rank;
+    Suit m_suit;
 };
 
 class Deck
@@ -67,11 +80,8 @@ class Deck
 
   private:
     /// @brief Here is where we use the etl generic enum iterator class
-    using RankIterator = EnumerationIterator<Rank, Rank::ACE, Rank::KING>;
-    using SuitIterator = EnumerationIterator<Suit, Suit::HEARTS, Suit::SPADES>;
-
-  private:
-    std::vector<UniqueCard> _cards;
+    using RankIterator = etl::EnumerationIterator<Rank, Rank::Ace, Rank::King>;
+    using SuitIterator = etl::EnumerationIterator<Suit, Suit::Hearts, Suit::Spades>;
 
   public:
     /// @brief Builds a 52 card deck of 13 ranks with 4 suits,
@@ -85,23 +95,26 @@ class Deck
 
     /// @brief Uses a random number and The classic Mersenne Twister,
     /// random number generator to shuffle the deck.
-    auto shuffleDeck() -> void;
+    void ShuffleDeck();
 
     /// @brief Draws a single card from the deck if it isn't emptpy.
     ///
     /// @returns Result<UniqueCard, Error>
-    [[nodiscard]] auto drawCard() -> Result<UniqueCard, Error>;
+    [[nodiscard]] auto DrawCard() -> etl::Result<UniqueCard, Error>;
+
+  private:
+    std::vector<UniqueCard> m_cards;
 };
 
 class Player
 {
-  private:
-    std::vector<Deck::UniqueCard> _hand;
-
   public:
-    auto addCard(Deck::UniqueCard &&card) noexcept;
+    auto AddCard(Deck::UniqueCard &&card) noexcept;
 
-    [[nodiscard]] auto getHandValue() -> uint16_t;
+    [[nodiscard]] auto GetHandValue() -> uint16_t;
+
+  private:
+    std::vector<Deck::UniqueCard> m_hand;
 };
 
-} // namespace blackjack
+} // namespace Blackjack

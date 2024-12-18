@@ -3,6 +3,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2024-12-17
+
+### Added
+- New abstract class (etl::BaseError) for better and simpler error handling
+
+- New type definition (etl::DynError) which is just a std::shared_ptr<BaseError>
+  for more simple handling of Polymorphic errors and returning them up the function
+  call chain.
+
+- Unit tests for etl::DynError
+
+### Changed
+
+- Switch to using the optional's emplace method in Result.ok() and err() methods
+  to improve return value optimization.
+
+- Changed class member variable naming convention
+
+- Changed east const usage to standard west const
+
+- Cleaned up unit tests and examples.
+
+- Updated and improved README examples and simple use cases
+
+
+
+### Removed
+
+- IError and Error classes, BaseError replaced both.
+
+
 ## [0.5.0] - 2023-06-25
 
 ### Added

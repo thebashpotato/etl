@@ -40,11 +40,11 @@
 namespace etl
 {
 
-constexpr int VERSION_MAJOR = 0;
-constexpr int VERSION_MINOR = 7;
-constexpr int VERSION_PATCH = 0;
-constexpr int VERSION = (VERSION_MAJOR * 10000) + (VERSION_MINOR * 100) + VERSION_PATCH;
-constexpr std::string_view VERSION_STRING = "0.7.0";
+constexpr auto VERSION_MAJOR = 0;
+constexpr auto VERSION_MINOR = 8;
+constexpr auto VERSION_PATCH = 0;
+constexpr auto VERSION = (VERSION_MAJOR * 10000) + (VERSION_MINOR * 100) + VERSION_PATCH;
+constexpr std::string_view VERSION_STRING = "0.8.0";
 
 /// @brief Ditch those old C style for loops and iterate over your enums safely with ranged for loops.
 ///
@@ -53,35 +53,28 @@ constexpr std::string_view VERSION_STRING = "0.7.0";
 /// @example tests/enum_iterable_test.cpp
 template <typename EnumIterable, EnumIterable beginValue, EnumIterable endValue> class EnumerationIterator
 {
-  private:
-    /// @brief Verifys the type is indeed an enumeration class.
-    ///
-    /// @link https://en.cppreference.com/w/cpp/types/underlying_type
-    using value_t = std::underlying_type_t<EnumIterable>;
-    std::int64_t _value;
-
   public:
     /// @brief Default constructor builds an instance to the first value
     /// in the enumeration.
     ///
     /// @details Used in the begin() method.
-    EnumerationIterator() noexcept : _value(static_cast<value_t>(beginValue))
+    EnumerationIterator() noexcept : m_value(static_cast<value_t>(beginValue))
     {
     }
 
     /// @brief Constructs an instance to a specified value.
     ///
     /// @details Used in the end() method.
-    explicit EnumerationIterator(EnumIterable const &iter) noexcept : _value(static_cast<value_t>(iter))
+    explicit EnumerationIterator(EnumIterable const &iter) noexcept : m_value(static_cast<value_t>(iter))
     {
     }
 
     /// @brief Default Destructor Move/Copy constructor and assignment
     virtual ~EnumerationIterator() = default;
-    EnumerationIterator(EnumerationIterator &&other) noexcept = default;
-    auto operator=(EnumerationIterator &&other) noexcept -> EnumerationIterator & = default;
-    EnumerationIterator(EnumerationIterator const &other) = default;
-    auto operator=(EnumerationIterator const &other) -> EnumerationIterator & = default;
+    EnumerationIterator(EnumerationIterator &&rhs) noexcept = default;
+    auto operator=(EnumerationIterator &&rhs) noexcept -> EnumerationIterator & = default;
+    EnumerationIterator(const EnumerationIterator &rhs) = default;
+    auto operator=(const EnumerationIterator &rhs) -> EnumerationIterator & = default;
 
   public:
     /// @brief ++this overload
@@ -91,7 +84,7 @@ template <typename EnumIterable, EnumIterable beginValue, EnumIterable endValue>
     /// ineffecient and usually not needed.
     [[maybe_unused]] auto operator++() noexcept -> EnumerationIterator
     {
-        ++this->_value;
+        ++this->m_value;
         return *this;
     }
 
@@ -101,19 +94,19 @@ template <typename EnumIterable, EnumIterable beginValue, EnumIterable endValue>
     /// after casting it the type EnumIterable.
     [[nodiscard]] auto operator*() noexcept -> EnumIterable
     {
-        return static_cast<EnumIterable>(_value);
+        return static_cast<EnumIterable>(m_value);
     }
 
     /// @brief Is equal overload
-    [[nodiscard]] auto operator==(EnumerationIterator const &other_iterator) const noexcept -> bool
+    [[nodiscard]] auto operator==(const EnumerationIterator &rhs_iterator) const noexcept -> bool
     {
-        return _value == other_iterator._value;
+        return m_value == rhs_iterator.m_value;
     }
 
     /// @brief Not equal overload
-    [[nodiscard]] auto operator!=(EnumerationIterator const &other_iterator) const noexcept -> bool
+    [[nodiscard]] auto operator!=(const EnumerationIterator &rhs_iterator) const noexcept -> bool
     {
-        return !(*this == other_iterator);
+        return !(*this == rhs_iterator);
     }
 
   public:
@@ -130,6 +123,13 @@ template <typename EnumIterable, EnumIterable beginValue, EnumIterable endValue>
         static const auto endIter = ++EnumerationIterator(endValue);
         return endIter;
     }
+
+  private:
+    /// @brief Verifys the type is indeed an enumeration class.
+    ///
+    /// @link https://en.cppreference.com/w/cpp/types/underlying_type
+    using value_t = std::underlying_type_t<EnumIterable>;
+    std::int64_t m_value;
 };
 
 /// @brief Tag a primitive fundamental type to descriptive class names.
@@ -153,7 +153,7 @@ template <typename Tag, typename FundamentalType> class TaggedFundamental
         static_assert(std::is_fundamental<FundamentalType>::value);
     };
 
-    constexpr explicit TaggedFundamental(FundamentalType value) noexcept : value(std::move(value))
+    constexpr explicit TaggedFundamental(FundamentalType v) noexcept : value(std::move(v))
     {
         static_assert(std::is_fundamental<FundamentalType>::value);
     }
@@ -168,42 +168,42 @@ template <typename Tag, typename FundamentalType> class TaggedFundamental
     //////////////////////////////////
     /// Arithmetic operator overloads
     //////////////////////////////////
-    auto operator+(TaggedFundamental const &rhs) const noexcept -> TaggedFundamental
+    auto operator+(const TaggedFundamental &rhs) const noexcept -> TaggedFundamental
     {
         return TaggedFundamental(value + rhs.value);
     }
 
-    auto operator+(FundamentalType const &rhs) const noexcept -> TaggedFundamental
+    auto operator+(const FundamentalType &rhs) const noexcept -> TaggedFundamental
     {
         return TaggedFundamental(value + rhs);
     }
 
-    auto operator-(TaggedFundamental const &rhs) const noexcept -> TaggedFundamental
+    auto operator-(const TaggedFundamental &rhs) const noexcept -> TaggedFundamental
     {
         return TaggedFundamental(value - rhs.value);
     }
 
-    auto operator-(FundamentalType const &rhs) const noexcept -> TaggedFundamental
+    auto operator-(const FundamentalType &rhs) const noexcept -> TaggedFundamental
     {
         return TaggedFundamental(value - rhs);
     }
 
-    auto operator*(TaggedFundamental const &rhs) const noexcept -> TaggedFundamental
+    auto operator*(const TaggedFundamental &rhs) const noexcept -> TaggedFundamental
     {
         return TaggedFundamental(value * rhs.value);
     }
 
-    auto operator*(FundamentalType const &rhs) const noexcept -> TaggedFundamental
+    auto operator*(const FundamentalType &rhs) const noexcept -> TaggedFundamental
     {
         return TaggedFundamental(value * rhs);
     }
 
-    auto operator/(TaggedFundamental const &rhs) const noexcept -> TaggedFundamental
+    auto operator/(const TaggedFundamental &rhs) const noexcept -> TaggedFundamental
     {
         return TaggedFundamental(value / rhs.value);
     }
 
-    auto operator/(FundamentalType const &rhs) const noexcept -> TaggedFundamental
+    auto operator/(const FundamentalType &rhs) const noexcept -> TaggedFundamental
     {
         return TaggedFundamental(value / rhs);
     }
@@ -211,49 +211,49 @@ template <typename Tag, typename FundamentalType> class TaggedFundamental
     //////////////////////////////////////////////////////
     /// Compound assignment arithmetic operator overloads
     /////////////////////////////////////////////////////
-    auto operator+=(TaggedFundamental const &rhs) noexcept -> TaggedFundamental &
+    auto operator+=(const TaggedFundamental &rhs) noexcept -> TaggedFundamental &
     {
         value += rhs.value;
         return *this;
     }
 
-    auto operator+=(FundamentalType const &rhs) noexcept -> TaggedFundamental &
+    auto operator+=(const FundamentalType &rhs) noexcept -> TaggedFundamental &
     {
         value += rhs;
         return *this;
     }
 
-    auto operator-=(TaggedFundamental const &rhs) noexcept -> TaggedFundamental &
+    auto operator-=(const TaggedFundamental &rhs) noexcept -> TaggedFundamental &
     {
         value -= rhs.value;
         return *this;
     }
 
-    auto operator-=(FundamentalType const &rhs) noexcept -> TaggedFundamental &
+    auto operator-=(const FundamentalType &rhs) noexcept -> TaggedFundamental &
     {
         value -= rhs;
         return *this;
     }
 
-    auto operator*=(TaggedFundamental const &rhs) noexcept -> TaggedFundamental &
+    auto operator*=(const TaggedFundamental &rhs) noexcept -> TaggedFundamental &
     {
         value *= rhs.value;
         return *this;
     }
 
-    auto operator*=(FundamentalType const &rhs) noexcept -> TaggedFundamental &
+    auto operator*=(const FundamentalType &rhs) noexcept -> TaggedFundamental &
     {
         value *= rhs;
         return *this;
     }
 
-    auto operator/=(TaggedFundamental const &rhs) noexcept -> TaggedFundamental &
+    auto operator/=(const TaggedFundamental &rhs) noexcept -> TaggedFundamental &
     {
         value /= rhs.value;
         return *this;
     }
 
-    auto operator/=(FundamentalType const &rhs) noexcept -> TaggedFundamental &
+    auto operator/=(const FundamentalType &rhs) noexcept -> TaggedFundamental &
     {
         value /= rhs;
         return *this;
@@ -262,62 +262,62 @@ template <typename Tag, typename FundamentalType> class TaggedFundamental
     //////////////////////////////////
     /// Comparison operator overloads
     //////////////////////////////////
-    auto operator<(TaggedFundamental const &rhs) const noexcept -> bool
+    auto operator<(const TaggedFundamental &rhs) const noexcept -> bool
     {
         return value < rhs.value;
     }
 
-    auto operator<(FundamentalType const &rhs) const noexcept -> bool
+    auto operator<(const FundamentalType &rhs) const noexcept -> bool
     {
         return value < rhs;
     }
 
-    auto operator<=(TaggedFundamental const &rhs) const noexcept -> bool
+    auto operator<=(const TaggedFundamental &rhs) const noexcept -> bool
     {
         return value <= rhs.value;
     }
 
-    auto operator<=(FundamentalType const &rhs) const noexcept -> bool
+    auto operator<=(const FundamentalType &rhs) const noexcept -> bool
     {
         return value <= rhs;
     }
 
-    auto operator>(TaggedFundamental const &rhs) const noexcept -> bool
+    auto operator>(const TaggedFundamental &rhs) const noexcept -> bool
     {
         return value > rhs.value;
     }
 
-    auto operator>(FundamentalType const &rhs) const noexcept -> bool
+    auto operator>(const FundamentalType &rhs) const noexcept -> bool
     {
         return value > rhs;
     }
 
-    auto operator>=(TaggedFundamental const &rhs) const noexcept -> bool
+    auto operator>=(const TaggedFundamental &rhs) const noexcept -> bool
     {
         return value >= rhs.value;
     }
 
-    auto operator>=(FundamentalType const &rhs) const noexcept -> bool
+    auto operator>=(const FundamentalType &rhs) const noexcept -> bool
     {
         return value >= rhs;
     }
 
-    auto operator==(TaggedFundamental const &rhs) const noexcept -> bool
+    auto operator==(const TaggedFundamental &rhs) const noexcept -> bool
     {
         return value == rhs.value;
     }
 
-    auto operator==(FundamentalType const &rhs) const noexcept -> bool
+    auto operator==(const FundamentalType &rhs) const noexcept -> bool
     {
         return value == rhs;
     }
 
-    auto operator!=(TaggedFundamental const &rhs) const noexcept -> bool
+    auto operator!=(const TaggedFundamental &rhs) const noexcept -> bool
     {
         return value != rhs.value;
     }
 
-    auto operator!=(FundamentalType const &rhs) const noexcept -> bool
+    auto operator!=(const FundamentalType &rhs) const noexcept -> bool
     {
         return value != rhs;
     }
@@ -325,32 +325,32 @@ template <typename Tag, typename FundamentalType> class TaggedFundamental
     ////////////////////////////////
     /// Bitwise operator overloads
     ///////////////////////////////
-    auto operator&(TaggedFundamental const &rhs) const noexcept -> TaggedFundamental
+    auto operator&(const TaggedFundamental &rhs) const noexcept -> TaggedFundamental
     {
         return TaggedFundamental(value & rhs.value);
     }
 
-    auto operator&(FundamentalType const &rhs) const noexcept -> TaggedFundamental
+    auto operator&(const FundamentalType &rhs) const noexcept -> TaggedFundamental
     {
         return TaggedFundamental(value & rhs);
     }
 
-    auto operator|(TaggedFundamental const &rhs) const noexcept -> TaggedFundamental
+    auto operator|(const TaggedFundamental &rhs) const noexcept -> TaggedFundamental
     {
         return TaggedFundamental(value | rhs.value);
     }
 
-    auto operator|(FundamentalType const &rhs) const noexcept -> TaggedFundamental
+    auto operator|(const FundamentalType &rhs) const noexcept -> TaggedFundamental
     {
         return TaggedFundamental(value | rhs);
     }
 
-    auto operator^(TaggedFundamental const &rhs) const noexcept -> TaggedFundamental
+    auto operator^(const TaggedFundamental &rhs) const noexcept -> TaggedFundamental
     {
         return TaggedFundamental(value ^ rhs.value);
     }
 
-    auto operator^(FundamentalType const &rhs) const noexcept -> TaggedFundamental
+    auto operator^(const FundamentalType &rhs) const noexcept -> TaggedFundamental
     {
         return TaggedFundamental(value ^ rhs);
     }
@@ -360,22 +360,22 @@ template <typename Tag, typename FundamentalType> class TaggedFundamental
         return TaggedFundamental(~value);
     }
 
-    auto operator<<(TaggedFundamental const &rhs) const noexcept -> TaggedFundamental
+    auto operator<<(const TaggedFundamental &rhs) const noexcept -> TaggedFundamental
     {
         return TaggedFundamental(value << rhs.value);
     }
 
-    auto operator<<(FundamentalType const &rhs) const noexcept -> TaggedFundamental
+    auto operator<<(const FundamentalType &rhs) const noexcept -> TaggedFundamental
     {
         return TaggedFundamental(value << rhs);
     }
 
-    auto operator>>(TaggedFundamental const &rhs) const noexcept -> TaggedFundamental
+    auto operator>>(const TaggedFundamental &rhs) const noexcept -> TaggedFundamental
     {
         return TaggedFundamental(value >> rhs.value);
     }
 
-    auto operator>>(FundamentalType const &rhs) const noexcept -> TaggedFundamental
+    auto operator>>(const FundamentalType &rhs) const noexcept -> TaggedFundamental
     {
         return TaggedFundamental(value >> rhs);
     }
@@ -383,61 +383,61 @@ template <typename Tag, typename FundamentalType> class TaggedFundamental
     ///////////////////////////////////////////////////
     /// Compound assignment bitwise operator overloads
     ///////////////////////////////////////////////////
-    auto operator&=(TaggedFundamental const &rhs) noexcept -> TaggedFundamental &
+    auto operator&=(const TaggedFundamental &rhs) noexcept -> TaggedFundamental &
     {
         value &= rhs.value;
         return *this;
     }
 
-    auto operator&=(FundamentalType const &rhs) noexcept -> TaggedFundamental &
+    auto operator&=(const FundamentalType &rhs) noexcept -> TaggedFundamental &
     {
         value &= rhs;
         return *this;
     }
 
-    auto operator|=(TaggedFundamental const &rhs) noexcept -> TaggedFundamental &
+    auto operator|=(const TaggedFundamental &rhs) noexcept -> TaggedFundamental &
     {
         value |= rhs.value;
         return *this;
     }
 
-    auto operator|=(FundamentalType const &rhs) noexcept -> TaggedFundamental &
+    auto operator|=(const FundamentalType &rhs) noexcept -> TaggedFundamental &
     {
         value |= rhs;
         return *this;
     }
 
-    auto operator^=(TaggedFundamental const &rhs) noexcept -> TaggedFundamental &
+    auto operator^=(const TaggedFundamental &rhs) noexcept -> TaggedFundamental &
     {
         value ^= rhs.value;
         return *this;
     }
 
-    auto operator^=(FundamentalType const &rhs) noexcept -> TaggedFundamental &
+    auto operator^=(const FundamentalType &rhs) noexcept -> TaggedFundamental &
     {
         value ^= rhs;
         return *this;
     }
 
-    auto operator<<=(TaggedFundamental const &rhs) noexcept -> TaggedFundamental &
+    auto operator<<=(const TaggedFundamental &rhs) noexcept -> TaggedFundamental &
     {
         value <<= rhs.value;
         return *this;
     }
 
-    auto operator<<=(FundamentalType const &rhs) noexcept -> TaggedFundamental &
+    auto operator<<=(const FundamentalType &rhs) noexcept -> TaggedFundamental &
     {
         value <<= rhs;
         return *this;
     }
 
-    auto operator>>=(TaggedFundamental const &rhs) noexcept -> TaggedFundamental &
+    auto operator>>=(const TaggedFundamental &rhs) noexcept -> TaggedFundamental &
     {
         value >>= rhs.value;
         return *this;
     }
 
-    auto operator>>=(FundamentalType const &rhs) noexcept -> TaggedFundamental &
+    auto operator>>=(const FundamentalType &rhs) noexcept -> TaggedFundamental &
     {
         value >>= rhs;
         return *this;
@@ -450,11 +450,6 @@ template <typename Tag, typename FundamentalType> class TaggedFundamental
 /// macro invocation.
 class SourceCodeLocation
 {
-  private:
-    std::string _file;
-    uint32_t _line;
-    std::string _func;
-
   public:
     SourceCodeLocation() = delete;
 
@@ -463,36 +458,41 @@ class SourceCodeLocation
     /// @param `file` name of the file where the error occurred
     /// @param `line` line number where the error occurred
     /// @param `func` name of the function where the error occurred
-    SourceCodeLocation(std::string_view const &file, uint32_t line, std::string_view const &func) noexcept
-        : _file(file), _line(line), _func(func)
+    SourceCodeLocation(const std::string_view &file, const uint32_t line, const std::string_view &func) noexcept
+        : m_file(file), m_line(line), m_func(func)
     {
     }
 
     /// @brief Default Destructor, Move/Copy constructor and assignment
     virtual ~SourceCodeLocation() = default;
-    SourceCodeLocation(SourceCodeLocation &&other) noexcept = default;
-    auto operator=(SourceCodeLocation &&other) noexcept -> SourceCodeLocation & = default;
-    SourceCodeLocation(SourceCodeLocation const &other) = default;
-    auto operator=(SourceCodeLocation const &other) -> SourceCodeLocation & = default;
+    SourceCodeLocation(SourceCodeLocation &&rhs) noexcept = default;
+    auto operator=(SourceCodeLocation &&rhs) noexcept -> SourceCodeLocation & = default;
+    SourceCodeLocation(const SourceCodeLocation &rhs) = default;
+    auto operator=(const SourceCodeLocation &rhs) -> SourceCodeLocation & = default;
 
   public:
     /// @brief Get the file name in which the error occured
-    [[nodiscard]] inline auto file() const noexcept -> std::string_view
+    [[nodiscard]] auto file() const noexcept -> std::string_view
     {
-        return _file;
+        return m_file;
     }
 
     /// @brief Get the line number in which the error occured
-    [[nodiscard]] inline auto line() const noexcept -> uint32_t
+    [[nodiscard]] auto line() const noexcept -> uint32_t
     {
-        return _line;
+        return m_line;
     }
 
     /// @brief Get the name of the function in which the error occured
-    [[nodiscard]] inline auto function() const noexcept -> std::string_view
+    [[nodiscard]] auto function() const noexcept -> std::string_view
     {
-        return _func;
+        return m_func;
     }
+
+  private:
+    std::string m_file;
+    uint32_t m_line;
+    std::string m_func;
 };
 
 /// @brief Wrapper macro which constructs an instance of SourceCodeLocation in-place
@@ -504,35 +504,16 @@ class SourceCodeLocation
 #define RUNTIME_INFO SourceCodeLocation(__FILE__, __LINE__, static_cast<const char *>(__func__))
 #endif
 
-/// @brief Interface for an Error class
-class IError
+/// @brief Base Abstract Error for use with the Result and DynError types.
+///
+/// @detail Contains Function File and line information
+///
+/// @example `etl/tests/result_test.cpp` to see an example of using this BaseError class
+class BaseError
 {
   public:
-    IError() = default;
-    virtual ~IError() = default;
-    IError(IError &&other) noexcept = default;
-    auto operator=(IError &&other) noexcept -> IError & = default;
-    IError(IError const &other) = default;
-    auto operator=(IError const &other) -> IError & = default;
-
-  public:
-    [[nodiscard]] virtual inline auto msg() const noexcept -> std::string = 0;
-    [[nodiscard]] virtual inline auto info() const noexcept -> std::string = 0;
-};
-
-/// @brief A basic Error object which can be built using an error message and the
-/// SourceCodeLocation RUNTIME_INFO macro.
-class Error : public IError
-{
-  private:
-    std::string _msg;
-    std::string _info;
-
-  private:
     /// @brief Constructs the error with only a message
-    ///
-    /// @details This constructor is private to prevent the user from circumventing the create() method
-    explicit Error(std::string_view const &msg) noexcept : _msg(msg)
+    explicit BaseError(const std::string_view &msg) noexcept : m_msg(msg)
     {
     }
 
@@ -543,9 +524,9 @@ class Error : public IError
     ///
     /// @param `msg` the error message
     /// @param `slc` the source code location object
-    Error(std::string_view const &msg, SourceCodeLocation const &slc) noexcept : _msg(msg)
+    BaseError(const std::string_view &msg, const SourceCodeLocation &slc) noexcept : m_msg(msg)
     {
-        _info.append("Error: ")
+        m_info.append("Error: ")
             .append(msg)
             .append("\nFunction: ")
             .append(slc.function())
@@ -555,56 +536,42 @@ class Error : public IError
             .append(std::to_string(slc.line()));
     }
 
-  public:
-    /// @brief Default Destructor, Move/Copy constructor and assignment
-    ~Error() override = default;
-    Error(Error &&other) noexcept = default;
-    auto operator=(Error &&other) noexcept -> Error & = default;
-    Error(Error const &other) = default;
-    auto operator=(Error const &other) -> Error & = default;
+    BaseError() = default;
+    virtual ~BaseError() = default;
+    BaseError(BaseError &&rhs) noexcept = default;
+    BaseError(const BaseError &rhs) = default;
 
   public:
-    /// @brief Creates an Error object with only an error message via string_view
-    [[nodiscard]] inline static auto create(std::string_view const &msg) -> Error
-    {
-        auto error = Error(msg);
-        return error;
-    }
-
-    /// @brief Creates an Error object with error message and source location information
-    /// using move semantics
-    [[nodiscard]] inline static auto create(std::string_view const &msg, SourceCodeLocation const &slc) -> Error
-    {
-        auto error = Error(msg, slc);
-        return error;
-    }
+    auto operator=(BaseError &&rhs) noexcept -> BaseError & = default;
+    auto operator=(const BaseError &rhs) -> BaseError & = default;
 
   public:
-    /// @brief Get just the error message
-    [[nodiscard]] inline auto msg() const noexcept -> std::string override
+    [[nodiscard]] virtual auto msg() const noexcept -> std::string
     {
-        return _msg;
+        return m_msg;
+    };
+
+    void virtual set_msg(std::string new_msg) noexcept
+    {
+        m_msg = std::move(new_msg);
     }
 
-    /// @brief Override the current error message, useful when using the Result.mapErr method.
-    [[nodiscard]] inline auto set(std::string_view const &msg) noexcept
+    [[nodiscard]] virtual auto info() const noexcept -> std::string
     {
-        _msg = msg;
-    }
-
-    /// @brief Get the pre-formatted (pretty printed) error string.
-    ///
-    /// @details  If Error was not created with the RUNTIME_INFO macro info_ will be empty,
-    /// in which case the msg_ will be returned instead.
-    [[nodiscard]] inline auto info() const noexcept -> std::string override
-    {
-        if (!_info.empty())
+        if (!m_info.empty())
         {
-            return _info;
+            return m_info;
         }
-        return _msg;
+        return m_msg;
     }
+
+  protected:
+    std::string m_msg;
+    std::string m_info;
 };
+
+/// @brief Polymorphic error type definition
+using DynError = std::shared_ptr<etl::BaseError>;
 
 /// @brief Empty stub type for when the user wants a result with an Ok type
 /// with no value, since c++ doesn't have rusts () type, this is my workaround.
@@ -618,44 +585,43 @@ class Void
 /// @brief Generic Result type modeled after the Rust lanaguage's Result<T, E>
 template <typename OkType, typename ErrType> class Result
 {
-  private:
-    std::variant<OkType, ErrType> _result;
-    bool _is_ok{false};
-
   public:
     /// @brief All the constructors needed to build an OkType or ErrType
     Result() noexcept = default;
-    explicit Result(OkType const &value) noexcept : _result(value), _is_ok(true)
+    explicit Result(const OkType &value) noexcept : m_result(value), m_is_ok(true)
     {
     }
-    explicit Result(OkType &&value) noexcept : _result(std::move(value)), _is_ok(true)
+
+    explicit Result(OkType &&value) noexcept : m_result(std::move(value)), m_is_ok(true)
     {
     }
-    explicit Result(ErrType const &error) noexcept : _result(error)
+
+    explicit Result(const ErrType &error) noexcept : m_result(error)
     {
     }
-    explicit Result(ErrType &&error) noexcept : _result(std::move(error))
+
+    explicit Result(ErrType &&error) noexcept : m_result(std::move(error))
     {
     }
 
     /// @brief Default Destructor, Move/Copy constructor and assignment
     virtual ~Result() = default;
-    Result(Result &&other) noexcept = default;
-    auto operator=(Result &&other) noexcept -> Result & = default;
-    Result(const Result &other) = default;
-    auto operator=(const Result &other) -> Result & = default;
+    Result(Result &&rhs) noexcept = default;
+    auto operator=(Result &&rhs) noexcept -> Result & = default;
+    Result(const Result &rhs) = default;
+    auto operator=(const Result &rhs) -> Result & = default;
 
   public:
     /// @brief Check if the variant is of the [OkType]
-    [[nodiscard]] inline auto is_ok() const noexcept -> bool
+    [[nodiscard]] auto is_ok() const noexcept -> bool
     {
-        return _is_ok;
+        return m_is_ok;
     }
 
     /// @brief Check if the variant is of the [ErrType]
-    [[nodiscard]] inline auto is_err() const noexcept -> bool
+    [[nodiscard]] auto is_err() const noexcept -> bool
     {
-        return !_is_ok;
+        return !m_is_ok;
     }
 
     /// @brief Get the OkType value
@@ -664,16 +630,17 @@ template <typename OkType, typename ErrType> class Result
     ///
     /// @return std::optinal<OkType> for safety, incase the user did not call
     /// is_ok() before using this method.
-    [[nodiscard]] inline auto ok() const noexcept -> std::optional<OkType>
+    [[nodiscard]] auto ok() const noexcept -> std::optional<OkType>
     {
-        if (_is_ok)
+        std::optional<OkType> ret;
+        if (m_is_ok)
         {
-            if (auto *value = std::get_if<OkType>(&_result))
+            if (auto *value = std::get_if<OkType>(&m_result))
             {
-                return *value;
+                ret.emplace(*value);
             }
         }
-        return std::nullopt;
+        return ret;
     }
 
     /// @brief Get the ErrType value
@@ -682,16 +649,17 @@ template <typename OkType, typename ErrType> class Result
     ///
     /// @return std::optinal<ErrType> for safety, incase the user did not call
     /// is_err() before using this method.
-    [[nodiscard]] inline auto err() const noexcept -> std::optional<ErrType>
+    [[nodiscard]] auto err() const noexcept -> std::optional<ErrType>
     {
-        if (!_is_ok)
+        std::optional<ErrType> ret;
+        if (!m_is_ok)
         {
-            if (auto *err = std::get_if<ErrType>(&_result))
+            if (auto *err = std::get_if<ErrType>(&m_result))
             {
-                return *err;
+                ret.emplace(*err);
             }
         }
-        return std::nullopt;
+        return ret;
     }
 
     /// @brief Maps a custom/lambda function to the [OkType] leaving the [ErrType] untouched.
@@ -700,22 +668,21 @@ template <typename OkType, typename ErrType> class Result
     ///
     /// @return Returns the Result type with a modified OkType, or just the Result unmodified
     /// if is_ok() is false.
-    template <typename Function>
-    [[nodiscard]] inline auto map(Function &&func) const noexcept -> Result<OkType, ErrType>
+    template <typename Function> [[nodiscard]] auto map(Function &&func) const noexcept -> Result<OkType, ErrType>
     {
-        if (_is_ok)
+        if (m_is_ok)
         {
-            if constexpr (std::is_invocable_r_v<OkType, Function, OkType const &>)
+            if constexpr (std::is_invocable_r_v<OkType, Function, const OkType &>)
             {
                 return Result<OkType, ErrType>(
-                    std::invoke(std::forward<Function>(func), *std::get_if<OkType>(&_result)));
+                    std::invoke(std::forward<Function>(func), *std::get_if<OkType>(&m_result)));
             }
             else
             {
-                return Result<OkType, ErrType>(*std::get_if<OkType>(&_result));
+                return Result<OkType, ErrType>(*std::get_if<OkType>(&m_result));
             }
         }
-        return Result<OkType, ErrType>(std::move(*std::get_if<ErrType>(&_result)));
+        return Result<OkType, ErrType>(std::move(*std::get_if<ErrType>(&m_result)));
     }
 
     /// @brief Maps a custom/lambda function to the [ErrType] leaving the [OkType] untouched.
@@ -724,26 +691,29 @@ template <typename OkType, typename ErrType> class Result
     ///
     /// @return Returns the Result type with a modified ErrType, or just the Result unmodified
     /// if is_err() is false.
-    template <typename Function>
-    [[nodiscard]] inline auto map_err(Function &&func) const noexcept -> Result<OkType, ErrType>
+    template <typename Function> [[nodiscard]] auto map_err(Function &&func) const noexcept -> Result<OkType, ErrType>
     {
-        if (!_is_ok)
+        if (!m_is_ok)
         {
-            if constexpr (std::is_invocable_r_v<ErrType, Function, ErrType const &>)
+            if constexpr (std::is_invocable_r_v<ErrType, Function, const ErrType &>)
             {
                 return Result<OkType, ErrType>(
-                    std::invoke(std::forward<Function>(func), *std::get_if<ErrType>(&_result)));
+                    std::invoke(std::forward<Function>(func), *std::get_if<ErrType>(&m_result)));
             }
             else
             {
-                return Result<OkType, ErrType>(*std::get_if<ErrType>(&_result));
+                return Result<OkType, ErrType>(*std::get_if<ErrType>(&m_result));
             }
         }
-        return Result<OkType, ErrType>(std::move(*std::get_if<OkType>(&_result)));
+        return Result<OkType, ErrType>(std::move(*std::get_if<OkType>(&m_result)));
     }
+
+  private:
+    std::variant<OkType, ErrType> m_result;
+    bool m_is_ok{};
 };
 
-/// @brief Result Template Specialization for std::unique_ptr.
+/// @brief Result Template Specialization for std::unique_ptr<OkType>.
 ///
 /// @details Since std::unique_ptr is a move only type, the generic Result implementation
 /// confuses which constructors are to be used and its not enough. Objects with deleted copy constructors
@@ -751,52 +721,52 @@ template <typename OkType, typename ErrType> class Result
 /// an example on how to do it.
 template <typename OkType, typename ErrType> class Result<std::unique_ptr<OkType>, ErrType>
 {
-  private:
-    std::variant<std::unique_ptr<OkType>, ErrType> _result;
-    bool _is_ok{false};
 
   public:
     /// @brief All the constructors needed to build an OkType or ErrType for a move only type
     Result() noexcept = default;
-    explicit Result(std::unique_ptr<OkType> &&value) noexcept : _result(std::move(value)), _is_ok(true)
+    explicit Result(std::unique_ptr<OkType> &&value) noexcept : m_result(std::move(value)), m_is_ok(true)
     {
     }
-    explicit Result(ErrType const &error) noexcept : _result(error)
+
+    explicit Result(const ErrType &error) noexcept : m_result(error)
     {
     }
-    explicit Result(ErrType &&error) noexcept : _result(std::move(error))
+
+    explicit Result(ErrType &&error) noexcept : m_result(std::move(error))
     {
     }
 
   public:
     /// @brief Check if the variant value is of the [OkType]
-    [[nodiscard]] inline auto is_ok() const noexcept -> bool
+    [[nodiscard]] auto is_ok() const noexcept -> bool
     {
-        return _is_ok;
+        return m_is_ok;
     }
 
     /// @brief Check if the variant value is of the [ErrType]
-    [[nodiscard]] inline auto is_err() const noexcept -> bool
+    [[nodiscard]] auto is_err() const noexcept -> bool
     {
-        return !_is_ok;
+        return !m_is_ok;
     }
 
     /// @brief Gets the [OkType] value from the variant
     ///
     /// @details The user should always use the is_ok() method before using ok()
     ///
-    /// @return std::optinal<OkType> for safety, incase the user did not call
+    /// @return std::optional<std::unique_ptr<OkType>> for safety, incase the user did not call
     /// is_ok() before using this method.
-    [[nodiscard]] inline auto ok() const noexcept -> std::optional<std::unique_ptr<OkType>>
+    [[nodiscard]] auto ok() noexcept -> std::optional<std::unique_ptr<OkType>>
     {
-        if (_is_ok)
+        std::optional<std::unique_ptr<OkType>> ret;
+        if (m_is_ok)
         {
-            if (auto *value = std::get_if<std::unique_ptr<OkType>>(&_result))
+            if (auto *value = std::get_if<std::unique_ptr<OkType>>(&m_result))
             {
-                return std::make_unique<OkType>(**value);
+                ret.emplace(std::move(std::make_unique<OkType>(**value)));
             }
         }
-        return std::nullopt;
+        return ret;
     }
 
     /// @brief Get the [ErrType] value from the variant
@@ -805,17 +775,22 @@ template <typename OkType, typename ErrType> class Result<std::unique_ptr<OkType
     ///
     /// @return std::optinal<ErrType> for safety, incase the user did not call
     /// is_err() before using this method.
-    [[nodiscard]] inline auto err() const noexcept -> std::optional<ErrType>
+    [[nodiscard]] auto err() const noexcept -> std::optional<ErrType>
     {
-        if (!_is_ok)
+        std::optional<ErrType> ret;
+        if (!m_is_ok)
         {
-            if (auto *err = std::get_if<ErrType>(&_result))
+            if (auto *err = std::get_if<ErrType>(&m_result))
             {
-                return *err;
+                ret.emplace(*err);
             }
         }
-        return std::nullopt;
+        return ret;
     }
+
+  private:
+    std::variant<std::unique_ptr<OkType>, ErrType> m_result;
+    bool m_is_ok{};
 };
 
 } // namespace etl

@@ -1,11 +1,13 @@
 #include <cstdint>
-#include <etl.hpp>
-#include <gtest/gtest.h>
 #include <vector>
+
+#include <etl.hpp>
+
+#include <gtest/gtest.h>
 
 TEST(EtlIterable, EnumIterTest)
 {
-    enum class Integers : uint16_t
+    enum class Integers : std::uint8_t
     {
         Zero = 0,
         One,
@@ -21,7 +23,7 @@ TEST(EtlIterable, EnumIterTest)
 
     using IntegerIterator = etl::EnumerationIterator<Integers, Integers::Zero, Integers::Nine>;
 
-    std::vector<uint16_t> numbers;
+    std::vector<std::uint8_t> numbers;
     for (auto const &iter : IntegerIterator())
     {
         numbers.push_back(static_cast<uint16_t>(iter));

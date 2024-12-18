@@ -1,4 +1,5 @@
 #include "blackjack.hpp"
+
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
@@ -9,84 +10,84 @@
 #include <random>
 #include <utility>
 
-namespace blackjack
+namespace Blackjack
 {
 
-Card::Card(Rank rank, Suit suit) noexcept : _rank(rank), _suit(suit)
+Card::Card(Rank rank, Suit suit) noexcept : m_rank(rank), m_suit(suit)
 {
 }
 
-auto Card::getRank() const noexcept -> Rank
+auto Card::rank() const noexcept -> Rank
 {
-    return _rank;
+    return m_rank;
 }
 
-auto Card::getSuite() const noexcept -> Suit
+auto Card::suit() const noexcept -> Suit
 {
-    return _suit;
+    return m_suit;
 }
 
 Deck::Deck() noexcept
 {
-    for (auto const &suit : SuitIterator())
+    for (const auto &suit : SuitIterator())
     {
-        for (auto const &rank : RankIterator())
+        for (const auto &rank : RankIterator())
         {
-            _cards.emplace_back(std::make_unique<Card>(rank, suit));
+            m_cards.emplace_back(std::make_unique<Card>(rank, suit));
         }
     }
 }
 
 auto Deck::size() -> std::size_t
 {
-    return _cards.size();
+    return m_cards.size();
 }
 
-auto Deck::shuffleDeck() -> void
+auto Deck::ShuffleDeck() -> void
 {
     std::random_device random_number;
     std::mt19937 generator(random_number());
-    std::shuffle(_cards.begin(), _cards.end(), generator);
+    std::shuffle(m_cards.begin(), m_cards.end(), generator);
 }
 
-auto Deck::drawCard() -> Result<UniqueCard, Error>
+auto Deck::DrawCard() -> etl::Result<UniqueCard, Error>
 {
-    if (_cards.empty())
+    if (m_cards.empty())
     {
-        return Result<UniqueCard, Error>(Error::create("Deck is empty", RUNTIME_INFO));
+        return etl::Result<UniqueCard, Error>(Error("Deck is empty", etl::RUNTIME_INFO));
     }
-    auto card = std::move(_cards.back());
-    _cards.pop_back();
-    return Result<UniqueCard, Error>(std::move(card));
+    auto card = std::move(m_cards.back());
+    m_cards.pop_back();
+    return etl::Result<UniqueCard, Error>(std::move(card));
 }
 
-auto Player::addCard(Deck::UniqueCard &&card) noexcept
+auto Player::AddCard(Deck::UniqueCard &&card) noexcept
 {
-    _hand.emplace_back(std::move(card));
+    m_hand.emplace_back(std::move(card));
 }
 
-auto Player::getHandValue() -> uint16_t
+auto Player::GetHandValue() -> std::uint16_t
 {
     constexpr auto best_hand_value = 21;
     constexpr auto remove_value = 10;
     constexpr auto hightest_ace_value = 11;
 
-    uint16_t value = 0;
-    uint16_t aces = 0;
+    std::uint16_t value = 0;
+    std::uint16_t aces = 0;
 
-    for (const auto &card : this->_hand)
+    for (const auto &card : this->m_hand)
     {
-        auto cardValue = card->getRank();
-        if (cardValue >= Rank::TEN)
+        auto card_value = card->rank();
+        if (card_value >= Rank::Ten)
         {
-            cardValue = Rank::TEN;
+            card_value = Rank::Ten;
         }
-        else if (cardValue == Rank::ACE)
+        else if (card_value == Rank::Ace)
         {
             aces++;
-            cardValue = static_cast<Rank>(hightest_ace_value);
+            card_value = static_cast<Rank>(hightest_ace_value);
         }
-        value += static_cast<uint16_t>(cardValue);
+        value += static_cast<std::uint16_t>(card_value);
     }
 
     while (value > best_hand_value && aces > 0)
@@ -97,15 +98,15 @@ auto Player::getHandValue() -> uint16_t
     return value;
 }
 
-} // namespace blackjack
+} // namespace Blackjack
 
-auto draw_two_cards(blackjack::Deck &deck, blackjack::Player &entity)
+void DrawTwoCards(Blackjack::Deck &deck, Blackjack::Player &entity)
 {
     for (int i = 0; i < 2; ++i)
     {
-        if (auto result = deck.drawCard(); result.is_ok())
+        if (auto result = deck.DrawCard(); result.is_ok())
         {
-            entity.addCard(std::move(result.ok().value()));
+            entity.AddCard(std::move(*result.ok()));
         }
         else
         {
@@ -116,18 +117,18 @@ auto draw_two_cards(blackjack::Deck &deck, blackjack::Player &entity)
 
 auto main() -> int
 {
-    blackjack::Deck deck;
-    deck.shuffleDeck();
+    Blackjack::Deck deck;
+    deck.ShuffleDeck();
 
-    blackjack::Player player;
-    blackjack::Player dealer;
+    Blackjack::Player player;
+    Blackjack::Player dealer;
     std::cout << "Deck has: " << deck.size() << " cards\n";
 
-    draw_two_cards(deck, player);
-    draw_two_cards(deck, dealer);
+    DrawTwoCards(deck, player);
+    DrawTwoCards(deck, dealer);
 
-    std::cout << "Player hand value: " << player.getHandValue() << '\n';
-    std::cout << "Dealer hand value: " << dealer.getHandValue() << '\n';
+    std::cout << "Player hand value: " << player.GetHandValue() << '\n';
+    std::cout << "Dealer hand value: " << dealer.GetHandValue() << '\n';
     std::cout << "Deck has: " << deck.size() << " cards\n";
 
     return EXIT_SUCCESS;
