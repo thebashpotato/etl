@@ -205,7 +205,7 @@ make uninstall
 ### Find Package (assuming it has been installed globally on your system)
 
 ```cmake
-find_package(etl 0.8.0 REQUIRED)
+find_package(etl 0.8.3 REQUIRED)
 
 # Your Application linking cmake code
 target_link_libraries(
@@ -218,20 +218,7 @@ target_link_libraries(
 Please check out how to use [CPM](https://github.com/cpm-cmake/CPM.cmake) it is dead simple.
 
 ```cmake
-cpmaddpackage(
-  NAME
-  etl
-  GITHUB_REPOSITORY
-  thebashpotato/etl
-  VERSION
-  0.8.0)
-
-if(etl_ADDED)
-  message(STATUS "Extra Template Library added")
-  add_library(etl::etl INTERFACE IMPORTED)
-  target_include_directories(etl::etl INTERFACE ${etl_SOURCE_DIR}/etl/include)
-endif()
-
+cpmaddpackage("gh:thebashpotato/etl#v0.8.3")
 
 # Your Application linking cmake code
 target_link_libraries(

@@ -42,9 +42,9 @@ namespace etl
 
 constexpr auto VERSION_MAJOR = 0;
 constexpr auto VERSION_MINOR = 8;
-constexpr auto VERSION_PATCH = 2;
+constexpr auto VERSION_PATCH = 3;
 constexpr auto VERSION = (VERSION_MAJOR * 10000) + (VERSION_MINOR * 100) + VERSION_PATCH;
-constexpr std::string_view VERSION_STRING = "0.8.2";
+constexpr std::string_view VERSION_STRING = "0.8.3";
 
 /// @brief Ditch those old C style for loops and iterate over your enums safely with ranged for loops.
 ///

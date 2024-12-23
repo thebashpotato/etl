@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.18)
 #
 project(
   etl
-  VERSION 0.8.2
+  VERSION 0.8.3
   DESCRIPTION "C++ Extra Template Library"
   HOMEPAGE_URL "https://github.com/thebashpotato/extra-template-library"
   LANGUAGES CXX)
@@ -98,10 +98,6 @@ if(ETL_DEV_MODE)
     message(WARNING "gtest was not configured properly")
   endif()
   enable_testing()
-else()
-  set(CMAKE_BUILD_TYPE
-      Release
-      CACHE STRING "Forcing build type to release" FORCE)
 endif()
 
 #
