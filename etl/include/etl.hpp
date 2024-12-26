@@ -42,9 +42,9 @@ namespace etl
 
 constexpr auto VERSION_MAJOR = 0;
 constexpr auto VERSION_MINOR = 8;
-constexpr auto VERSION_PATCH = 3;
+constexpr auto VERSION_PATCH = 4;
 constexpr auto VERSION = (VERSION_MAJOR * 10000) + (VERSION_MINOR * 100) + VERSION_PATCH;
-constexpr std::string_view VERSION_STRING = "0.8.3";
+constexpr std::string_view VERSION_STRING = "0.8.4";
 
 /// @brief Ditch those old C style for loops and iterate over your enums safely with ranged for loops.
 ///
@@ -122,6 +122,14 @@ template <typename EnumIterable, EnumIterable beginValue, EnumIterable endValue>
         // cache the value
         static const auto endIter = ++EnumerationIterator(endValue);
         return endIter;
+    }
+
+    /// @brief Returns the size of the enumeration range.
+    ///
+    /// @details Computes the size of the range between beginValue and endValue.
+    static constexpr auto size() noexcept -> std::size_t
+    {
+        return static_cast<std::size_t>(endValue) - static_cast<std::size_t>(beginValue) + 1;
     }
 
   private:

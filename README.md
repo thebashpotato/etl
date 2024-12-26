@@ -205,7 +205,7 @@ make uninstall
 ### Find Package (assuming it has been installed globally on your system)
 
 ```cmake
-find_package(etl 0.8.3 REQUIRED)
+find_package(etl 0.8.4 REQUIRED)
 
 # Your Application linking cmake code
 target_link_libraries(
@@ -218,7 +218,7 @@ target_link_libraries(
 Please check out how to use [CPM](https://github.com/cpm-cmake/CPM.cmake) it is dead simple.
 
 ```cmake
-cpmaddpackage("gh:thebashpotato/etl#v0.8.3")
+cpmaddpackage("gh:thebashpotato/etl#v0.8.4")
 
 # Your Application linking cmake code
 target_link_libraries(

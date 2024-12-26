@@ -61,7 +61,8 @@ tidy:
 	@${DEVKIT} clang --tidy
 
 test: dev
-	@cd build && ctest
+	ctest --output-on-failure --test-dir build 
+
 
 install: rel
 	@sudo cmake --install build
